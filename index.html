@@ -2155,14 +2155,14 @@
 
     <!-- 이미지 업로드 -->
     <div class="form-section">
-      <div class="form-section-label">홍보 이미지 (최대 3장)</div>
+      <div class="form-section-label">홍보 이미지</div>
       <div class="img-upload-section">
 
         <!-- 슬롯 1 -->
         <div class="img-slot" id="img-slot-0">
           <div class="img-slot-empty" onclick="triggerImgUpload(0)">
             <div class="slot-icon">🖼️</div>
-            <div class="slot-label">이미지 1 클릭 또는 드래그</div>
+            <div class="slot-label">이미지 클릭 또는 드래그</div>
             <div class="slot-hint">JPG · PNG · WEBP · 최대 5MB</div>
           </div>
           <div class="img-slot-preview" id="img-preview-0">
@@ -2178,46 +2178,6 @@
           <input type="file" id="img-input-0" accept="image/*" style="display:none" onchange="onImgSelected(0,this)">
         </div>
 
-        <!-- 슬롯 2 -->
-        <div class="img-slot" id="img-slot-1">
-          <div class="img-slot-empty" onclick="triggerImgUpload(1)">
-            <div class="slot-icon">🖼️</div>
-            <div class="slot-label">이미지 2 클릭 또는 드래그</div>
-            <div class="slot-hint">JPG · PNG · WEBP · 최대 5MB</div>
-          </div>
-          <div class="img-slot-preview" id="img-preview-1">
-            <img id="img-thumb-1" src="" alt="">
-            <div class="img-slot-toolbar">
-              <button class="img-slot-btn delete" onclick="removeImg(1)" title="삭제">✕</button>
-            </div>
-            <div class="img-slot-caption">
-              <span id="img-name-1">이미지 2</span>
-              <span id="img-size-1"></span>
-            </div>
-          </div>
-          <input type="file" id="img-input-1" accept="image/*" style="display:none" onchange="onImgSelected(1,this)">
-        </div>
-
-        <!-- 슬롯 3 -->
-        <div class="img-slot" id="img-slot-2">
-          <div class="img-slot-empty" onclick="triggerImgUpload(2)">
-            <div class="slot-icon">🖼️</div>
-            <div class="slot-label">이미지 3 클릭 또는 드래그</div>
-            <div class="slot-hint">JPG · PNG · WEBP · 최대 5MB</div>
-          </div>
-          <div class="img-slot-preview" id="img-preview-2">
-            <img id="img-thumb-2" src="" alt="">
-            <div class="img-slot-toolbar">
-              <button class="img-slot-btn delete" onclick="removeImg(2)" title="삭제">✕</button>
-            </div>
-            <div class="img-slot-caption">
-              <span id="img-name-2">이미지 3</span>
-              <span id="img-size-2"></span>
-            </div>
-          </div>
-          <input type="file" id="img-input-2" accept="image/*" style="display:none" onchange="onImgSelected(2,this)">
-        </div>
-
         <div style="font-size:11px;color:var(--muted);line-height:1.6;">
           💡 이미지는 리플렛 본문 중간에 자동 배치됩니다.<br>
           리플렛 생성 후 즉시 반영됩니다.
@@ -2230,94 +2190,6 @@
       <span class="btn-icon">✦</span>
       AI로 리플렛 생성하기
     </button>
-
-    <!-- ── 빠른 공유 위자드 ── -->
-    <div class="quick-share-box" id="quick-share-box">
-      <div class="qs-header" onclick="toggleQuickShare()">
-        <span>💬 카카오 빠른 공유</span>
-        <span id="qs-toggle-icon">▼</span>
-      </div>
-      <div class="qs-body" id="qs-body">
-
-        <!-- 진행 단계 표시 -->
-        <div class="qs-steps-row">
-          <div class="qs-step-dot done"  id="qs-dot-1">1</div>
-          <div class="qs-step-line" id="qs-line-1"></div>
-          <div class="qs-step-dot" id="qs-dot-2">2</div>
-          <div class="qs-step-line" id="qs-line-2"></div>
-          <div class="qs-step-dot" id="qs-dot-3">3</div>
-          <div class="qs-step-line" id="qs-line-3"></div>
-          <div class="qs-step-dot" id="qs-dot-4">4</div>
-          <div class="qs-step-line" id="qs-line-4"></div>
-          <div class="qs-step-dot" id="qs-dot-5">5</div>
-        </div>
-
-        <!-- STEP 1 : URL 입력 -->
-        <div class="qs-step-panel active" id="qs-panel-1">
-          <div class="qs-step-label">STEP 1 · 홈페이지 URL 입력</div>
-          <input class="qs-input" type="text" id="qs-url"
-                 placeholder="https://your-site.vercel.app"
-                 oninput="qsSyncURL()">
-          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Vercel 또는 GitHub Pages URL</div>
-          <button class="qs-next-btn" onclick="qsNext(1)">다음 →</button>
-        </div>
-
-        <!-- STEP 2 : 추천인 입력 -->
-        <div class="qs-step-panel" id="qs-panel-2">
-          <div class="qs-step-label">STEP 2 · 추천인 이름 입력 (선택)</div>
-          <input class="qs-input" type="text" id="qs-ref"
-                 placeholder="예: 홍길동  (없으면 비워두세요)"
-                 oninput="qsSyncRef()">
-          <div style="font-size:11px;color:var(--muted);margin-top:4px;">링크에 ?ref=이름 자동 추가</div>
-          <div style="display:flex;gap:6px;margin-top:10px;">
-            <button class="qs-prev-btn" onclick="qsPrev(2)">← 이전</button>
-            <button class="qs-next-btn" style="flex:1;" onclick="qsNext(2)">다음 →</button>
-          </div>
-        </div>
-
-        <!-- STEP 3 : 리플렛 생성 -->
-        <div class="qs-step-panel" id="qs-panel-3">
-          <div class="qs-step-label">STEP 3 · 리플렛 생성</div>
-          <div class="qs-info-box">URL과 추천인이 포함된 리플렛을 생성합니다.</div>
-          <button class="qs-action-btn" onclick="qsGenerate()">
-            ✦ AI로 리플렛 생성하기
-          </button>
-          <div style="display:flex;gap:6px;margin-top:8px;">
-            <button class="qs-prev-btn" onclick="qsPrev(3)">← 이전</button>
-            <button class="qs-next-btn" style="flex:1;" onclick="qsNext(3)">생성 완료 → 다음</button>
-          </div>
-        </div>
-
-        <!-- STEP 4 : 카카오 메시지 -->
-        <div class="qs-step-panel" id="qs-panel-4">
-          <div class="qs-step-label">STEP 4 · 카카오 메시지 확인</div>
-          <div class="qs-kakao-preview" id="qs-kakao-preview">URL을 입력하면 메시지가 표시됩니다.</div>
-          <button class="qs-action-btn" style="background:#FEE500;color:#3C1E1E;margin-top:10px;" onclick="qsCopyMsg()">
-            📋 메시지 복사하기
-          </button>
-          <div style="display:flex;gap:6px;margin-top:8px;">
-            <button class="qs-prev-btn" onclick="qsPrev(4)">← 이전</button>
-            <button class="qs-next-btn" style="flex:1;" onclick="qsNext(4)">복사 완료 → 다음</button>
-          </div>
-        </div>
-
-        <!-- STEP 5 : 전송 완료 -->
-        <div class="qs-step-panel" id="qs-panel-5">
-          <div class="qs-step-label">STEP 5 · 카카오톡에 전송</div>
-          <div class="qs-info-box" style="background:#e8f5e9;border-color:#4caf50;color:#2e7d32;">
-            ✅ 메시지가 복사되었습니다!<br>카카오톡을 열고 대화방에 붙여넣기 하세요.
-          </div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px;">
-            📱 <strong>모바일:</strong> 카카오톡 → 대화방 → 길게 누르기 → 붙여넣기<br>
-            💻 <strong>PC:</strong> 카카오톡 → 대화방 → Ctrl+V
-          </div>
-          <button class="qs-action-btn" style="margin-top:12px;background:#3d1266;" onclick="qsReset()">
-            🔄 새 추천인으로 다시 공유
-          </button>
-        </div>
-
-      </div><!-- /qs-body -->
-    </div><!-- /quick-share-box -->
 
   </aside>
 
@@ -4102,8 +3974,8 @@ document.getElementById('share-modal-overlay').addEventListener('click', functio
   if (e.target === this) closeShareModal();
 });
 
-// ── IMAGE UPLOAD ──
-const uploadedImages = [null, null, null]; // base64 strings
+// ── IMAGE UPLOAD (1장) ──
+const uploadedImages = [null]; // 1장만
 
 function triggerImgUpload(idx) {
   document.getElementById(`img-input-${idx}`).click();
@@ -4117,9 +3989,9 @@ function onImgSelected(idx, input) {
   }
   const reader = new FileReader();
   reader.onload = e => {
-    uploadedImages[idx] = e.target.result;
-    showImgSlot(idx, e.target.result, file.name, file.size);
-    showToast(`✅ 이미지 ${idx+1} 업로드 완료! 리플렛을 재생성하면 반영됩니다.`);
+    uploadedImages[0] = e.target.result;
+    showImgSlot(0, e.target.result, file.name, file.size);
+    showToast('✅ 이미지 업로드 완료! 리플렛을 재생성하면 반영됩니다.');
   };
   reader.readAsDataURL(file);
   input.value = '';
@@ -4137,39 +4009,28 @@ function showImgSlot(idx, src, name, size) {
 }
 
 function removeImg(idx) {
-  uploadedImages[idx] = null;
+  uploadedImages[0] = null;
   document.getElementById(`img-thumb-${idx}`).src = '';
   document.getElementById(`img-slot-${idx}`).classList.remove('has-image');
   document.querySelector(`#img-slot-${idx} .img-slot-empty`).style.display = 'flex';
   document.getElementById(`img-preview-${idx}`).style.display = 'none';
-  showToast(`🗑️ 이미지 ${idx+1} 삭제됨`);
+  showToast('🗑️ 이미지가 삭제되었습니다');
 }
 
 function buildImgGridHTML() {
-  const imgs = uploadedImages.filter(Boolean);
-  if (imgs.length === 0) return '';
-  const rounded = 'border-radius:10px; display:block; width:100%; object-fit:cover;';
-  if (imgs.length === 1) {
-    return `<div style="border-radius:10px;overflow:hidden;"><img src="${imgs[0]}" style="${rounded} height:300px;"></div>`;
-  }
-  if (imgs.length === 2) {
-    return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-      <img src="${imgs[0]}" style="${rounded} height:220px;">
-      <img src="${imgs[1]}" style="${rounded} height:220px;">
-    </div>`;
-  }
-  return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-    <img src="${imgs[0]}" style="${rounded} height:260px;grid-column:1/-1;">
-    <img src="${imgs[1]}" style="${rounded} height:170px;">
-    <img src="${imgs[2]}" style="${rounded} height:170px;">
+  const img = uploadedImages[0];
+  if (!img) return '';
+  return `<div style="border-radius:10px;overflow:hidden;">
+    <img src="${img}" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:10px;">
   </div>`;
 }
 
-// 드래그&드롭 지원
-[0,1,2].forEach(idx => {
-  const slot = document.getElementById(`img-slot-${idx}`);
+// 드래그&드롭 지원 (슬롯 0만)
+(function() {
+  const slot = document.getElementById('img-slot-0');
+  if (!slot) return;
   slot.addEventListener('dragover', e => { e.preventDefault(); slot.classList.add('drag-over'); });
-  slot.addEventListener('dragleave', ()  => slot.classList.remove('drag-over'));
+  slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
   slot.addEventListener('drop', e => {
     e.preventDefault();
     slot.classList.remove('drag-over');
@@ -4178,13 +4039,13 @@ function buildImgGridHTML() {
     if (file.size > 5*1024*1024) { showToast('⚠️ 파일 크기가 5MB를 초과합니다'); return; }
     const reader = new FileReader();
     reader.onload = e2 => {
-      uploadedImages[idx] = e2.target.result;
-      showImgSlot(idx, e2.target.result, file.name, file.size);
-      showToast(`✅ 이미지 ${idx+1} 업로드 완료! 리플렛을 재생성하면 반영됩니다.`);
+      uploadedImages[0] = e2.target.result;
+      showImgSlot(0, e2.target.result, file.name, file.size);
+      showToast('✅ 이미지 업로드 완료! 리플렛을 재생성하면 반영됩니다.');
     };
     reader.readAsDataURL(file);
   });
-});
+})();
 
 // ── SETTINGS ──
 const CONTACT_DEFAULTS = {

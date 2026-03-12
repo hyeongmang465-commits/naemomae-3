@@ -432,10 +432,10 @@
   }
 
   .leaflet-body-text {
-    font-size: 13.5px;
-    line-height: 1.85;
+    font-size: 15.5px;
+    line-height: 2.0;
     color: inherit;
-    opacity: 0.8;
+    opacity: 0.88;
   }
 
   .feature-grid {
@@ -2171,8 +2171,11 @@
               <button class="img-slot-btn delete" onclick="removeImg(0)" title="삭제">✕</button>
             </div>
             <div class="img-slot-caption">
-              <span id="img-name-0">이미지 1</span>
-              <span id="img-size-0"></span>
+              <span id="img-name-0" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px;"></span>
+              <span style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
+                <span id="img-px-0" style="color:var(--muted);font-size:11px;"></span>
+                <span id="img-size-0" style="color:var(--accent);font-weight:700;font-size:11px;"></span>
+              </span>
             </div>
           </div>
           <input type="file" id="img-input-0" accept="image/*" style="display:none" onchange="onImgSelected(0,this)">
@@ -3668,19 +3671,11 @@ function getFallbackData(brand, content, contact) {
     subtitle: content.slice(0, 50) + (content.length > 50 ? '...' : ''),
     section1_title: "소개",
     section1_text: content,
-    features: [
-      { icon: "⭐", title: "최고 품질", desc: "엄선된 서비스" },
-      { icon: "💎", title: "특별 혜택", desc: "한정 제공" },
-      { icon: "🚀", title: "빠른 응답", desc: "즉시 상담" },
-      { icon: "🤝", title: "신뢰 보장", desc: "만족 보장" }
-    ],
-    info_rows: [
-      { icon: "📞", label: "연락처", text: contact || "문의 바랍니다" },
-      { icon: "📍", label: "위치", text: "방문 환영" }
-    ],
+    features: [],
+    info_rows: [],
     cta_text: "지금 문의하기",
     footer_left: brand,
-    footer_tagline: "최고의 선택, 최고의 경험"
+    footer_tagline: "인체 운동에너지 조절 전문"
   };
 }
 
@@ -3733,13 +3728,7 @@ function renderLeaflet(d, brand, contact) {
     </div>
   ` : '';
 
-  // Footer link icons
-  const footerLinks = `
-    <div class="footer-links">
-      ${homepageUrl ? `<a class="footer-link-btn" href="${homepageUrl}" target="_blank" title="홈페이지" style="background:rgba(255,255,255,0.2);">🌐</a>` : ''}
-      ${youtubeUrl  ? `<a class="footer-link-btn" href="${youtubeUrl}"  target="_blank" title="유튜브"  style="background:rgba(255,0,0,0.7);">▶</a>` : ''}
-    </div>
-  `;
+  // Footer link icons — 삭제 (홈페이지·유튜브 탭 제거)
 
   const html = `
     <div style="background:${bg}; color:${p}; display:flex; flex-direction:column; min-height:820px;">
@@ -3764,34 +3753,30 @@ function renderLeaflet(d, brand, contact) {
           <p class="leaflet-body-text">${d.section1_text || ''}</p>
         </div>
 
-        ${uploadedImages.filter(Boolean).length > 0 ? `
+        ${uploadedImages[0] ? `
         <div class="leaflet-divider"></div>
-        <div>
-          ${buildImgGridHTML()}
-        </div>` : ''}
-
-        ${infoRowsHTML ? `
-        <div class="leaflet-divider"></div>
-        <div>
-          <div class="leaflet-section-title" style="color:${s}">안내</div>
-          <div style="display:flex; flex-direction:column; gap:12px;">${infoRowsHTML}</div>
-        </div>` : ''}
+        <div>${buildImgGridHTML()}</div>` : ''}
 
         ${qrHTML}
 
       </div>
 
-      <!-- Footer -->
-      <div class="leaflet-footer-band" style="background:${p}; color:${textOnPrimary}">
-        <div>
-          <div style="font-weight:700; font-size:14px;">${d.footer_left || brand}</div>
-          <div style="font-size:11px; opacity:0.6; margin-top:2px;">${d.footer_tagline || ''}</div>
-          ${referrer ? `<div style="font-size:11px; margin-top:4px; color:${s}; font-weight:600;">👤 ${referrer} 추천</div>` : ''}
+      <!-- Footer: 고정 연락처 -->
+      <div class="leaflet-footer-band" style="background:${p}; color:${textOnPrimary}; flex-direction:column; align-items:flex-start; gap:6px; padding:22px 40px;">
+        <div style="font-size:11px; letter-spacing:2px; opacity:0.55; text-transform:uppercase; margin-bottom:2px;">CONTACT</div>
+        <div style="font-family:'Noto Serif KR',serif; font-size:16px; font-weight:900; letter-spacing:-0.3px;">
+          인체 운동에너지 조절 전문가 멘토
         </div>
-        <div style="display:flex; align-items:center; gap:12px;">
-          ${footerLinks}
-          <div class="cta-button-leaflet" style="background:${s}; color:#fff">${d.cta_text || '문의하기'}</div>
+        <div style="font-family:'Noto Serif KR',serif; font-size:22px; font-weight:900; color:${s}; letter-spacing:1px;">
+          김 강산
         </div>
+        <div style="display:flex; align-items:center; gap:18px; margin-top:4px; flex-wrap:wrap;">
+          <span style="font-size:14px; font-weight:700; display:flex; align-items:center; gap:6px;">
+            📞 ${contact || '010-5078-5320'}
+          </span>
+          ${referrer ? `<span style="font-size:12px; color:${s}; font-weight:700;">👤 ${referrer} 추천</span>` : ''}
+        </div>
+        <div style="font-size:11px; opacity:0.5; margin-top:4px;">${d.footer_tagline || ''}</div>
       </div>
 
     </div>
@@ -3998,11 +3983,26 @@ function onImgSelected(idx, input) {
 }
 
 function showImgSlot(idx, src, name, size) {
+  // 파일명
+  document.getElementById(`img-name-${idx}`).textContent =
+    name.length > 18 ? name.slice(0,15)+'...' : name;
+
+  // 파일 용량
+  const sizeStr = size/1024 < 1024
+    ? Math.round(size/1024) + 'KB'
+    : (size/1024/1024).toFixed(1) + 'MB';
+  document.getElementById(`img-size-${idx}`).textContent = sizeStr;
+
+  // 픽셀 크기 (Image 객체로 측정)
+  const tempImg = new Image();
+  tempImg.onload = () => {
+    const pxEl = document.getElementById(`img-px-${idx}`);
+    if (pxEl) pxEl.textContent = `${tempImg.naturalWidth} × ${tempImg.naturalHeight}px`;
+  };
+  tempImg.src = src;
+
+  // 썸네일·슬롯 상태 업데이트
   document.getElementById(`img-thumb-${idx}`).src = src;
-  document.getElementById(`img-name-${idx}`).textContent = name.length > 18 ? name.slice(0,15)+'...' : name;
-  document.getElementById(`img-size-${idx}`).textContent = (size/1024 < 1024)
-    ? Math.round(size/1024)+'KB'
-    : (size/1024/1024).toFixed(1)+'MB';
   document.getElementById(`img-slot-${idx}`).classList.add('has-image');
   document.querySelector(`#img-slot-${idx} .img-slot-empty`).style.display = 'none';
   document.getElementById(`img-preview-${idx}`).style.display = 'block';
@@ -4011,6 +4011,10 @@ function showImgSlot(idx, src, name, size) {
 function removeImg(idx) {
   uploadedImages[0] = null;
   document.getElementById(`img-thumb-${idx}`).src = '';
+  document.getElementById(`img-name-${idx}`).textContent = '';
+  document.getElementById(`img-size-${idx}`).textContent = '';
+  const pxEl = document.getElementById(`img-px-${idx}`);
+  if (pxEl) pxEl.textContent = '';
   document.getElementById(`img-slot-${idx}`).classList.remove('has-image');
   document.querySelector(`#img-slot-${idx} .img-slot-empty`).style.display = 'flex';
   document.getElementById(`img-preview-${idx}`).style.display = 'none';

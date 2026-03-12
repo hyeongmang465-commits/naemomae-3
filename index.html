@@ -1390,6 +1390,232 @@
   }
   .btn-deploy-finish:hover { opacity: 0.9; }
 
+  /* ── CONTACT / INQUIRY ── */
+  .contact-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20,8,35,0.72);
+    z-index: 1300;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+  }
+  .contact-modal-overlay.open { display: flex; }
+
+  .contact-modal {
+    background: white;
+    border-radius: 24px;
+    width: 380px;
+    max-width: 94vw;
+    box-shadow: 0 40px 120px rgba(61,18,102,0.35);
+    overflow: hidden;
+    animation: fadeInUp 0.3s ease;
+  }
+
+  .contact-modal-top {
+    background: linear-gradient(135deg, #1e0a2e 0%, #4a1080 100%);
+    padding: 28px 28px 22px;
+    color: white;
+    text-align: center;
+    position: relative;
+  }
+  .contact-modal-top .cm-butterfly {
+    font-size: 36px; display: block; margin-bottom: 8px;
+  }
+  .contact-modal-top h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 20px; font-weight: 900;
+    margin-bottom: 4px;
+  }
+  .contact-modal-top p {
+    font-size: 12px; opacity: 0.6; line-height: 1.6;
+  }
+  .contact-modal-close {
+    position: absolute; top: 14px; right: 16px;
+    background: rgba(255,255,255,0.12); border: none;
+    color: white; font-size: 16px; cursor: pointer;
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .contact-modal-close:hover { background: rgba(255,255,255,0.22); }
+
+  .contact-modal-body { padding: 24px 24px 28px; }
+
+  /* 전화 버튼 */
+  .contact-tel-btn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(135deg, #3d1266, #7b2fa0);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 18px 22px;
+    width: 100%;
+    cursor: pointer;
+    text-decoration: none;
+    margin-bottom: 12px;
+    transition: opacity 0.15s, transform 0.12s;
+    box-shadow: 0 6px 20px rgba(61,18,102,0.3);
+  }
+  .contact-tel-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+  .contact-tel-btn:active { transform: scale(0.98); }
+  .contact-tel-icon {
+    width: 46px; height: 46px; border-radius: 12px;
+    background: rgba(255,255,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .contact-tel-text-main {
+    font-size: 18px; font-weight: 900;
+    font-family: 'Noto Serif KR', serif;
+    letter-spacing: 1px;
+  }
+  .contact-tel-text-sub {
+    font-size: 11px; opacity: 0.7; margin-top: 2px;
+    display: block;
+  }
+
+  /* 카카오 버튼 */
+  .contact-kakao-btn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #FEE500;
+    color: #3C1E1E;
+    border: none;
+    border-radius: 14px;
+    padding: 18px 22px;
+    width: 100%;
+    cursor: pointer;
+    text-decoration: none;
+    margin-bottom: 20px;
+    transition: opacity 0.15s, transform 0.12s;
+    box-shadow: 0 6px 20px rgba(254,229,0,0.4);
+  }
+  .contact-kakao-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+  .contact-kakao-btn:active { transform: scale(0.98); }
+  .contact-kakao-icon {
+    width: 46px; height: 46px; border-radius: 12px;
+    background: rgba(0,0,0,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  .contact-kakao-text-main {
+    font-size: 16px; font-weight: 900;
+    font-family: 'Noto Serif KR', serif;
+  }
+  .contact-kakao-text-sub {
+    font-size: 11px; opacity: 0.6; margin-top: 2px;
+    display: block;
+  }
+
+  /* 운영시간 */
+  .contact-hours {
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 12.5px;
+    color: var(--ink);
+    line-height: 1.8;
+    text-align: center;
+  }
+  .contact-hours strong { color: var(--accent); }
+
+  /* 헤더 문의 버튼 */
+  .header-contact-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: linear-gradient(135deg, #c9a227, #e8c040);
+    color: #1e0a2e;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Noto Serif KR', serif;
+    box-shadow: 0 2px 12px rgba(201,162,39,0.4);
+    transition: opacity 0.15s, transform 0.12s;
+    white-space: nowrap;
+  }
+  .header-contact-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  /* 플로팅 문의 버튼 */
+  .floating-contact {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .floating-tel-btn {
+    display: flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, #3d1266, #7b2fa0);
+    color: white; border: none; border-radius: 28px;
+    padding: 12px 20px;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; text-decoration: none;
+    box-shadow: 0 6px 24px rgba(61,18,102,0.4);
+    transition: opacity 0.15s, transform 0.12s;
+    font-family: 'Noto Sans KR', sans-serif;
+    animation: floatPulse 2.5s ease-in-out infinite;
+  }
+  .floating-tel-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+  .floating-kakao-btn {
+    display: flex; align-items: center; gap: 10px;
+    background: #FEE500;
+    color: #3C1E1E; border: none; border-radius: 28px;
+    padding: 12px 20px;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; text-decoration: none;
+    box-shadow: 0 6px 24px rgba(254,229,0,0.5);
+    transition: opacity 0.15s, transform 0.12s;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .floating-kakao-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+  .floating-toggle-btn {
+    width: 54px; height: 54px; border-radius: 50%;
+    background: linear-gradient(135deg, #c9a227, #e8c040);
+    color: #1e0a2e; border: none;
+    font-size: 22px; cursor: pointer;
+    box-shadow: 0 6px 24px rgba(201,162,39,0.5);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s;
+    animation: floatPulse 2.5s ease-in-out infinite;
+  }
+  .floating-toggle-btn:hover { transform: scale(1.08); }
+  .floating-toggle-btn.open { animation: none; transform: rotate(45deg); }
+
+  .floating-actions {
+    display: none;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+  .floating-actions.open { display: flex; }
+
+  .floating-label {
+    font-size: 11px; font-weight: 700;
+    background: rgba(30,10,46,0.85);
+    color: white; padding: 3px 10px;
+    border-radius: 10px; white-space: nowrap;
+  }
+
+  @keyframes floatPulse {
+    0%, 100% { box-shadow: 0 6px 24px rgba(201,162,39,0.5); }
+    50%       { box-shadow: 0 6px 32px rgba(201,162,39,0.8), 0 0 0 6px rgba(201,162,39,0.15); }
+  }
+
   /* ── QUICK SHARE WIZARD ── */
   .quick-share-box {
     margin-top: 18px;
@@ -1537,6 +1763,9 @@
     </div>
   </div>
   <div class="header-tag">LEAFLET AI GENERATOR</div>
+  <button class="header-contact-btn" onclick="openContactModal()">
+    📞 상담 문의
+  </button>
 </header>
 
 <div class="app-layout">
@@ -1777,6 +2006,71 @@
     </div>
 
   </main>
+</div>
+
+<!-- ══════════════════════════════════════
+     📞 상담 문의 모달
+════════════════════════════════════════ -->
+<div class="contact-modal-overlay" id="contact-modal-overlay">
+  <div class="contact-modal">
+
+    <div class="contact-modal-top">
+      <button class="contact-modal-close" onclick="closeContactModal()">✕</button>
+      <span class="cm-butterfly">🦋</span>
+      <h2>상담 문의</h2>
+      <p>(주)내몸애맞게 전문 상담사가<br>친절하게 안내해 드립니다</p>
+    </div>
+
+    <div class="contact-modal-body">
+
+      <!-- 전화 연결 -->
+      <a class="contact-tel-btn" href="tel:01050785320">
+        <div class="contact-tel-icon">📞</div>
+        <div>
+          <div class="contact-tel-text-main">010-5078-5320</div>
+          <span class="contact-tel-text-sub">클릭하면 바로 전화 연결됩니다</span>
+        </div>
+      </a>
+
+      <!-- 카카오 채널 -->
+      <a class="contact-kakao-btn" href="https://invite.kakao.com/tc/Jm89uZEn79" target="_blank">
+        <div class="contact-kakao-icon">💬</div>
+        <div>
+          <div class="contact-kakao-text-main">카카오톡 채널 상담</div>
+          <span class="contact-kakao-text-sub">채팅으로 편하게 문의하세요</span>
+        </div>
+      </a>
+
+      <!-- 운영시간 -->
+      <div class="contact-hours">
+        🕐 <strong>상담 운영시간</strong><br>
+        평일 09:00 ~ 18:00<br>
+        <span style="font-size:11px;color:var(--muted);">주말·공휴일은 카카오톡 채널로 문의해 주세요</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── 플로팅 문의 버튼 ── -->
+<div class="floating-contact" id="floating-contact">
+  <div class="floating-actions" id="floating-actions">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="floating-label">전화 상담</span>
+      <a class="floating-tel-btn" href="tel:01050785320">
+        📞 010-5078-5320
+      </a>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="floating-label">카카오 상담</span>
+      <a class="floating-kakao-btn" href="https://invite.kakao.com/tc/Jm89uZEn79" target="_blank">
+        💬 카카오톡 채널
+      </a>
+    </div>
+  </div>
+  <button class="floating-toggle-btn" id="floating-toggle-btn" onclick="toggleFloating()" title="상담 문의">
+    💬
+  </button>
 </div>
 
 <!-- ══════════════════════════════════════
@@ -3239,6 +3533,28 @@ function shareKakao() {
 document.getElementById('share-modal-overlay').addEventListener('click', function(e) {
   if (e.target === this) closeShareModal();
 });
+
+// ── CONTACT MODAL ──
+function openContactModal() {
+  document.getElementById('contact-modal-overlay').classList.add('open');
+}
+function closeContactModal() {
+  document.getElementById('contact-modal-overlay').classList.remove('open');
+}
+document.getElementById('contact-modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeContactModal();
+});
+
+// ── FLOATING BUTTON ──
+let floatingOpen = false;
+function toggleFloating() {
+  floatingOpen = !floatingOpen;
+  const actions = document.getElementById('floating-actions');
+  const btn     = document.getElementById('floating-toggle-btn');
+  actions.classList.toggle('open', floatingOpen);
+  btn.classList.toggle('open', floatingOpen);
+  btn.textContent = floatingOpen ? '✕' : '💬';
+}
 
 // ── QUICK SHARE WIZARD ──
 let qsOpen = false;

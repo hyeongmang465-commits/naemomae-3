@@ -2181,6 +2181,28 @@
           <input type="file" id="img-input-0" accept="image/*" style="display:none" onchange="onImgSelected(0,this)">
         </div>
 
+        <!-- 이미지 높이 조절 슬라이더 -->
+        <div id="img-ratio-box" style="display:none; background:var(--cream); border:1.5px solid var(--border); border-radius:10px; padding:12px 14px; margin-top:2px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:12px; font-weight:700; color:var(--ink);">📐 이미지 높이 조절</span>
+            <span id="img-ratio-val" style="font-size:12px; font-weight:800; color:var(--accent); min-width:48px; text-align:right;">300px</span>
+          </div>
+          <input type="range" id="img-ratio-slider" min="100" max="600" step="10" value="300"
+            style="width:100%; accent-color:var(--accent);"
+            oninput="onImgRatioChange(this.value)">
+          <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-top:4px;">
+            <span>낮게 100px</span>
+            <span>중간 300px</span>
+            <span>높게 600px</span>
+          </div>
+          <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;">
+            <button onclick="onImgRatioChange(150)" style="flex:1;padding:5px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">배너형<br><span style="opacity:.6;">150px</span></button>
+            <button onclick="onImgRatioChange(250)" style="flex:1;padding:5px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">표준형<br><span style="opacity:.6;">250px</span></button>
+            <button onclick="onImgRatioChange(350)" style="flex:1;padding:5px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">정사각<br><span style="opacity:.6;">350px</span></button>
+            <button onclick="onImgRatioChange(500)" style="flex:1;padding:5px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">세로형<br><span style="opacity:.6;">500px</span></button>
+          </div>
+        </div>
+
         <div style="font-size:11px;color:var(--muted);line-height:1.6;">
           💡 이미지는 리플렛 본문 중간에 자동 배치됩니다.<br>
           리플렛 생성 후 즉시 반영됩니다.
@@ -3715,20 +3737,20 @@ function renderLeaflet(d, brand, contact) {
     </div>
   `).join('');
 
-  // QR section
-  const qrHTML = qrFinalUrl ? `
-    <div class="leaflet-divider"></div>
-    <div class="leaflet-qr-section" style="background:${bg}">
-      <img src="${generateQRDataURL(qrFinalUrl, 110)}" width="90" height="90" alt="QR코드" style="border-radius:6px; border:3px solid ${p};">
-      <div class="leaflet-qr-info">
-        <div class="leaflet-qr-label" style="color:${s}">QR 스캔으로 바로 연결</div>
-        <div class="leaflet-qr-name" style="color:${p}">${referrer ? referrer + ' 추천' : '바로가기'}</div>
-        <div class="leaflet-qr-url" style="color:${p}">${qrTargetUrl.replace(/^https?:\/\//, '')}</div>
+  // QR — 푸터용 HTML (본문에서 제거)
+  const qrFooterHTML = qrFinalUrl ? `
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;">
+      <img src="${generateQRDataURL(qrFinalUrl, 130)}" width="100" height="100" alt="QR코드"
+        style="border-radius:8px; border:3px solid ${s}; display:block;">
+      <div style="font-size:10px; opacity:0.6; text-align:center; max-width:100px; word-break:break-all;">
+        ${referrer ? referrer + ' 추천' : 'QR 스캔'}
       </div>
     </div>
   ` : '';
 
   // Footer link icons — 삭제 (홈페이지·유튜브 탭 제거)
+
+  const imgH = window._imgHeightPx || 300;
 
   const html = `
     <div style="background:${bg}; color:${p}; display:flex; flex-direction:column; min-height:820px;">
@@ -3755,28 +3777,34 @@ function renderLeaflet(d, brand, contact) {
 
         ${uploadedImages[0] ? `
         <div class="leaflet-divider"></div>
-        <div>${buildImgGridHTML()}</div>` : ''}
-
-        ${qrHTML}
+        <div>
+          <img src="${uploadedImages[0]}" style="width:100%;height:${imgH}px;object-fit:cover;display:block;border-radius:10px;">
+        </div>` : ''}
 
       </div>
 
-      <!-- Footer: 고정 연락처 -->
-      <div class="leaflet-footer-band" style="background:${p}; color:${textOnPrimary}; flex-direction:column; align-items:flex-start; gap:6px; padding:22px 40px;">
-        <div style="font-size:11px; letter-spacing:2px; opacity:0.55; text-transform:uppercase; margin-bottom:2px;">CONTACT</div>
-        <div style="font-family:'Noto Serif KR',serif; font-size:16px; font-weight:900; letter-spacing:-0.3px;">
-          인체 운동에너지 조절 전문가 멘토
-        </div>
-        <div style="font-family:'Noto Serif KR',serif; font-size:22px; font-weight:900; color:${s}; letter-spacing:1px;">
-          김 강산
-        </div>
-        <div style="display:flex; align-items:center; gap:18px; margin-top:4px; flex-wrap:wrap;">
-          <span style="font-size:14px; font-weight:700; display:flex; align-items:center; gap:6px;">
+      <!-- Footer: 연락처 + QR 나란히 -->
+      <div class="leaflet-footer-band" style="background:${p}; color:${textOnPrimary}; display:flex; flex-direction:row; align-items:center; justify-content:space-between; padding:24px 40px; gap:20px; margin-top:auto;">
+
+        <!-- 왼쪽: 연락처 -->
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <div style="font-size:11px; letter-spacing:2px; opacity:0.55; text-transform:uppercase;">CONTACT</div>
+          <div style="font-family:'Noto Serif KR',serif; font-size:14px; font-weight:700;">
+            인체 운동에너지 조절 전문가 멘토
+          </div>
+          <div style="font-family:'Noto Serif KR',serif; font-size:22px; font-weight:900; color:${s}; letter-spacing:1px; line-height:1.2;">
+            김 강산
+          </div>
+          <div style="font-size:14px; font-weight:700; margin-top:2px; display:flex;align-items:center;gap:6px;">
             📞 ${contact || '010-5078-5320'}
-          </span>
-          ${referrer ? `<span style="font-size:12px; color:${s}; font-weight:700;">👤 ${referrer} 추천</span>` : ''}
+          </div>
+          ${referrer ? `<div style="font-size:12px; color:${s}; font-weight:700; margin-top:2px;">👤 ${referrer} 추천</div>` : ''}
+          <div style="font-size:11px; opacity:0.45; margin-top:2px;">${d.footer_tagline || ''}</div>
         </div>
-        <div style="font-size:11px; opacity:0.5; margin-top:4px;">${d.footer_tagline || ''}</div>
+
+        <!-- 오른쪽: QR -->
+        ${qrFooterHTML}
+
       </div>
 
     </div>
@@ -3961,6 +3989,7 @@ document.getElementById('share-modal-overlay').addEventListener('click', functio
 
 // ── IMAGE UPLOAD (1장) ──
 const uploadedImages = [null]; // 1장만
+window._imgHeightPx  = 300;   // 기본 높이
 
 function triggerImgUpload(idx) {
   document.getElementById(`img-input-${idx}`).click();
@@ -3976,7 +4005,7 @@ function onImgSelected(idx, input) {
   reader.onload = e => {
     uploadedImages[0] = e.target.result;
     showImgSlot(0, e.target.result, file.name, file.size);
-    showToast('✅ 이미지 업로드 완료! 리플렛을 재생성하면 반영됩니다.');
+    showToast('✅ 이미지 업로드 완료! 높이를 조절 후 리플렛을 재생성하세요.');
   };
   reader.readAsDataURL(file);
   input.value = '';
@@ -3993,7 +4022,7 @@ function showImgSlot(idx, src, name, size) {
     : (size/1024/1024).toFixed(1) + 'MB';
   document.getElementById(`img-size-${idx}`).textContent = sizeStr;
 
-  // 픽셀 크기 (Image 객체로 측정)
+  // 픽셀 크기
   const tempImg = new Image();
   tempImg.onload = () => {
     const pxEl = document.getElementById(`img-px-${idx}`);
@@ -4001,11 +4030,14 @@ function showImgSlot(idx, src, name, size) {
   };
   tempImg.src = src;
 
-  // 썸네일·슬롯 상태 업데이트
+  // 썸네일·슬롯 상태
   document.getElementById(`img-thumb-${idx}`).src = src;
   document.getElementById(`img-slot-${idx}`).classList.add('has-image');
   document.querySelector(`#img-slot-${idx} .img-slot-empty`).style.display = 'none';
   document.getElementById(`img-preview-${idx}`).style.display = 'block';
+
+  // 슬라이더 박스 표시
+  document.getElementById('img-ratio-box').style.display = 'block';
 }
 
 function removeImg(idx) {
@@ -4018,18 +4050,31 @@ function removeImg(idx) {
   document.getElementById(`img-slot-${idx}`).classList.remove('has-image');
   document.querySelector(`#img-slot-${idx} .img-slot-empty`).style.display = 'flex';
   document.getElementById(`img-preview-${idx}`).style.display = 'none';
+  // 슬라이더 숨김
+  document.getElementById('img-ratio-box').style.display = 'none';
   showToast('🗑️ 이미지가 삭제되었습니다');
+}
+
+// 이미지 높이 비율 변경 → 리플렛 실시간 반영
+function onImgRatioChange(val) {
+  val = parseInt(val);
+  window._imgHeightPx = val;
+  // 슬라이더·표시값 동기화
+  const slider = document.getElementById('img-ratio-slider');
+  const label  = document.getElementById('img-ratio-val');
+  if (slider) slider.value = val;
+  if (label)  label.textContent = val + 'px';
+  // 리플렛 이미지 즉시 반영
+  const imgEl = document.querySelector('#leaflet-content img[src^="data:image"]');
+  if (imgEl) imgEl.style.height = val + 'px';
 }
 
 function buildImgGridHTML() {
   const img = uploadedImages[0];
   if (!img) return '';
-  return `<div style="border-radius:10px;overflow:hidden;">
-    <img src="${img}" style="width:100%;height:300px;object-fit:cover;display:block;border-radius:10px;">
-  </div>`;
+  const h = window._imgHeightPx || 300;
+  return `<img src="${img}" style="width:100%;height:${h}px;object-fit:cover;display:block;border-radius:10px;">`;
 }
-
-// 드래그&드롭 지원 (슬롯 0만)
 (function() {
   const slot = document.getElementById('img-slot-0');
   if (!slot) return;

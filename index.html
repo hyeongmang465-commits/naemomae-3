@@ -1390,6 +1390,113 @@
   }
   .btn-deploy-finish:hover { opacity: 0.9; }
 
+  /* ── QUICK SHARE WIZARD ── */
+  .quick-share-box {
+    margin-top: 18px;
+    border: 2px solid #FEE500;
+    border-radius: 14px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 4px 18px rgba(201,162,39,0.15);
+  }
+  .qs-header {
+    background: linear-gradient(135deg, #FEE500, #ffd000);
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #3C1E1E;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+  }
+  .qs-body {
+    padding: 16px;
+    display: none;
+  }
+  .qs-body.open { display: block; }
+
+  /* steps bar */
+  .qs-steps-row {
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 16px;
+  }
+  .qs-step-dot {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: #eee; color: #999;
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.2s;
+  }
+  .qs-step-dot.active { background: var(--accent); color: white; }
+  .qs-step-dot.done   { background: #4caf50; color: white; }
+  .qs-step-line {
+    flex: 1; height: 2px; background: #eee; transition: background 0.3s;
+  }
+  .qs-step-line.done { background: #4caf50; }
+
+  /* panels */
+  .qs-step-panel { display: none; }
+  .qs-step-panel.active { display: block; }
+
+  .qs-step-label {
+    font-size: 11px; font-weight: 700;
+    color: var(--accent); letter-spacing: 0.5px;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .qs-input {
+    width: 100%; padding: 9px 12px;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    font-size: 13px; font-family: 'Noto Sans KR', sans-serif;
+    outline: none; color: var(--ink);
+    transition: border-color 0.2s;
+  }
+  .qs-input:focus { border-color: var(--accent); }
+
+  .qs-next-btn {
+    width: 100%; margin-top: 10px;
+    padding: 10px; background: var(--accent); color: white;
+    border: none; border-radius: 8px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: opacity 0.15s;
+  }
+  .qs-next-btn:hover { opacity: 0.88; }
+  .qs-prev-btn {
+    padding: 10px 14px; background: white; color: var(--ink);
+    border: 1.5px solid var(--border); border-radius: 8px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .qs-action-btn {
+    width: 100%; padding: 11px;
+    background: linear-gradient(135deg,#3d1266,#7b2fa0);
+    color: white; border: none; border-radius: 8px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    margin-top: 10px; transition: opacity 0.15s;
+  }
+  .qs-action-btn:hover { opacity: 0.88; }
+
+  .qs-info-box {
+    background: var(--cream); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+    font-size: 12.5px; color: var(--ink); line-height: 1.6;
+  }
+  .qs-kakao-preview {
+    background: #FFFDE7;
+    border: 1.5px solid #FDD835;
+    border-radius: 10px 10px 10px 2px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: #333;
+    line-height: 1.7;
+    white-space: pre-line;
+    word-break: break-all;
+    min-height: 80px;
+  }
+
   /* ── EDIT OVERLAY ── */
   [contenteditable="true"] {
     outline: 2px dashed var(--accent);
@@ -1538,7 +1645,96 @@
       AI로 리플렛 생성하기
     </button>
 
+    <!-- ── 빠른 공유 위자드 ── -->
+    <div class="quick-share-box" id="quick-share-box">
+      <div class="qs-header" onclick="toggleQuickShare()">
+        <span>💬 카카오 빠른 공유</span>
+        <span id="qs-toggle-icon">▼</span>
+      </div>
+      <div class="qs-body" id="qs-body">
+
+        <!-- 진행 단계 표시 -->
+        <div class="qs-steps-row">
+          <div class="qs-step-dot done"  id="qs-dot-1">1</div>
+          <div class="qs-step-line" id="qs-line-1"></div>
+          <div class="qs-step-dot" id="qs-dot-2">2</div>
+          <div class="qs-step-line" id="qs-line-2"></div>
+          <div class="qs-step-dot" id="qs-dot-3">3</div>
+          <div class="qs-step-line" id="qs-line-3"></div>
+          <div class="qs-step-dot" id="qs-dot-4">4</div>
+          <div class="qs-step-line" id="qs-line-4"></div>
+          <div class="qs-step-dot" id="qs-dot-5">5</div>
+        </div>
+
+        <!-- STEP 1 : URL 입력 -->
+        <div class="qs-step-panel active" id="qs-panel-1">
+          <div class="qs-step-label">STEP 1 · 홈페이지 URL 입력</div>
+          <input class="qs-input" type="text" id="qs-url"
+                 placeholder="https://your-site.vercel.app"
+                 oninput="qsSyncURL()">
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Vercel 또는 GitHub Pages URL</div>
+          <button class="qs-next-btn" onclick="qsNext(1)">다음 →</button>
+        </div>
+
+        <!-- STEP 2 : 추천인 입력 -->
+        <div class="qs-step-panel" id="qs-panel-2">
+          <div class="qs-step-label">STEP 2 · 추천인 이름 입력 (선택)</div>
+          <input class="qs-input" type="text" id="qs-ref"
+                 placeholder="예: 홍길동  (없으면 비워두세요)"
+                 oninput="qsSyncRef()">
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">링크에 ?ref=이름 자동 추가</div>
+          <div style="display:flex;gap:6px;margin-top:10px;">
+            <button class="qs-prev-btn" onclick="qsPrev(2)">← 이전</button>
+            <button class="qs-next-btn" style="flex:1;" onclick="qsNext(2)">다음 →</button>
+          </div>
+        </div>
+
+        <!-- STEP 3 : 리플렛 생성 -->
+        <div class="qs-step-panel" id="qs-panel-3">
+          <div class="qs-step-label">STEP 3 · 리플렛 생성</div>
+          <div class="qs-info-box">URL과 추천인이 포함된 리플렛을 생성합니다.</div>
+          <button class="qs-action-btn" onclick="qsGenerate()">
+            ✦ AI로 리플렛 생성하기
+          </button>
+          <div style="display:flex;gap:6px;margin-top:8px;">
+            <button class="qs-prev-btn" onclick="qsPrev(3)">← 이전</button>
+            <button class="qs-next-btn" style="flex:1;" onclick="qsNext(3)">생성 완료 → 다음</button>
+          </div>
+        </div>
+
+        <!-- STEP 4 : 카카오 메시지 -->
+        <div class="qs-step-panel" id="qs-panel-4">
+          <div class="qs-step-label">STEP 4 · 카카오 메시지 확인</div>
+          <div class="qs-kakao-preview" id="qs-kakao-preview">URL을 입력하면 메시지가 표시됩니다.</div>
+          <button class="qs-action-btn" style="background:#FEE500;color:#3C1E1E;margin-top:10px;" onclick="qsCopyMsg()">
+            📋 메시지 복사하기
+          </button>
+          <div style="display:flex;gap:6px;margin-top:8px;">
+            <button class="qs-prev-btn" onclick="qsPrev(4)">← 이전</button>
+            <button class="qs-next-btn" style="flex:1;" onclick="qsNext(4)">복사 완료 → 다음</button>
+          </div>
+        </div>
+
+        <!-- STEP 5 : 전송 완료 -->
+        <div class="qs-step-panel" id="qs-panel-5">
+          <div class="qs-step-label">STEP 5 · 카카오톡에 전송</div>
+          <div class="qs-info-box" style="background:#e8f5e9;border-color:#4caf50;color:#2e7d32;">
+            ✅ 메시지가 복사되었습니다!<br>카카오톡을 열고 대화방에 붙여넣기 하세요.
+          </div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px;">
+            📱 <strong>모바일:</strong> 카카오톡 → 대화방 → 길게 누르기 → 붙여넣기<br>
+            💻 <strong>PC:</strong> 카카오톡 → 대화방 → Ctrl+V
+          </div>
+          <button class="qs-action-btn" style="margin-top:12px;background:#3d1266;" onclick="qsReset()">
+            🔄 새 추천인으로 다시 공유
+          </button>
+        </div>
+
+      </div><!-- /qs-body -->
+    </div><!-- /quick-share-box -->
+
   </aside>
+
 
   <!-- ── PREVIEW ── -->
   <main class="preview-area">
@@ -3043,6 +3239,104 @@ function shareKakao() {
 document.getElementById('share-modal-overlay').addEventListener('click', function(e) {
   if (e.target === this) closeShareModal();
 });
+
+// ── QUICK SHARE WIZARD ──
+let qsOpen = false;
+
+function toggleQuickShare() {
+  qsOpen = !qsOpen;
+  document.getElementById('qs-body').classList.toggle('open', qsOpen);
+  document.getElementById('qs-toggle-icon').textContent = qsOpen ? '▲' : '▼';
+  if (qsOpen) {
+    // pre-fill from main form
+    const hp = document.getElementById('homepage-url').value.trim();
+    const ref = document.getElementById('referrer-name').value.trim();
+    if (hp)  document.getElementById('qs-url').value = hp;
+    if (ref) document.getElementById('qs-ref').value = ref;
+    qsUpdatePreview();
+    qsGoTo(1);
+  }
+}
+
+function qsSyncURL() {
+  const v = document.getElementById('qs-url').value.trim();
+  document.getElementById('homepage-url').value = v;
+  document.getElementById('qr-url').value = v;
+  qsUpdatePreview();
+}
+function qsSyncRef() {
+  const v = document.getElementById('qs-ref').value.trim();
+  document.getElementById('referrer-name').value = v;
+  qsUpdatePreview();
+}
+
+function qsUpdatePreview() {
+  const brand   = document.getElementById('brand-name').value.trim() || '(주)내몸애맞게';
+  const hp      = document.getElementById('qs-url').value.trim() || 'https://your-site.vercel.app';
+  const ref     = document.getElementById('qs-ref').value.trim();
+  const purpose = selectedPurpose || '내몸애맞게 서비스';
+  let link = hp;
+  if (ref) { const sep = link.includes('?') ? '&' : '?'; link += sep + 'ref=' + encodeURIComponent(ref); }
+  const msg = ref
+    ? `안녕하세요 😊\n${ref}님이 보내드리는 리플렛입니다 🦋\n\n[${brand}]\n${purpose} 관련 정보를 확인해보세요!\n\n🔗 ${link}\n\n궁금하신 점은 언제든지 문의해주세요 ✨`
+    : `안녕하세요 😊\n[${brand}] 리플렛을 공유합니다 🦋\n\n${purpose} 관련 정보를 확인해보세요!\n\n🔗 ${link}\n\n궁금하신 점은 언제든지 문의해주세요 ✨`;
+  const el = document.getElementById('qs-kakao-preview');
+  if (el) el.textContent = msg;
+  // also sync main kakao preview
+  const main = document.getElementById('kakao-msg-preview');
+  if (main) main.textContent = msg;
+}
+
+function qsGoTo(n) {
+  for (let i = 1; i <= 5; i++) {
+    document.getElementById(`qs-panel-${i}`).classList.toggle('active', i === n);
+    const dot = document.getElementById(`qs-dot-${i}`);
+    dot.classList.remove('active','done');
+    if (i < n) dot.classList.add('done'), dot.textContent = '✓';
+    else if (i === n) dot.classList.add('active'), dot.textContent = i;
+    else dot.textContent = i;
+    const line = document.getElementById(`qs-line-${i}`);
+    if (line) line.classList.toggle('done', i < n);
+  }
+}
+
+function qsNext(cur) {
+  if (cur === 1) {
+    const url = document.getElementById('qs-url').value.trim();
+    if (!url) { showToast('⚠️ URL을 입력해주세요'); return; }
+  }
+  qsUpdatePreview();
+  qsGoTo(cur + 1);
+}
+function qsPrev(cur) { qsGoTo(cur - 1); }
+
+function qsGenerate() {
+  qsSyncURL(); qsSyncRef();
+  generateLeaflet();
+  showToast('✅ 리플렛 생성 중... 완료되면 다음 버튼을 눌러주세요');
+}
+
+function qsCopyMsg() {
+  const msg = document.getElementById('qs-kakao-preview').textContent || '';
+  navigator.clipboard.writeText(msg).then(() => {
+    showToast('📋 카카오톡 메시지 복사 완료! 카카오톡에 붙여넣기 하세요.');
+    qsGoTo(5);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = msg; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('📋 복사 완료! 카카오톡에 붙여넣기 하세요.');
+    qsGoTo(5);
+  });
+}
+
+function qsReset() {
+  document.getElementById('qs-ref').value = '';
+  document.getElementById('referrer-name').value = '';
+  qsUpdatePreview();
+  qsGoTo(2);
+  showToast('🔄 추천인 이름을 새로 입력하세요');
+}
 
 // ── VERCEL GUIDE ──
 let currentVcPhase = 1;

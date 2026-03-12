@@ -1729,6 +1729,82 @@
     50%       { box-shadow: 0 6px 32px rgba(201,162,39,0.8), 0 0 0 6px rgba(201,162,39,0.15); }
   }
 
+  /* ── IMAGE UPLOAD ── */
+  .img-upload-section { display: flex; flex-direction: column; gap: 10px; }
+
+  .img-upload-slots { display: flex; flex-direction: column; gap: 8px; }
+
+  .img-slot {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    background: white;
+    overflow: hidden;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .img-slot:hover { border-color: var(--accent); }
+  .img-slot.has-image { border-style: solid; border-color: var(--accent); }
+
+  .img-slot-empty {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 6px; padding: 18px 12px;
+    cursor: pointer; text-align: center;
+  }
+  .img-slot-empty .slot-icon { font-size: 26px; }
+  .img-slot-empty .slot-label {
+    font-size: 12px; font-weight: 700; color: var(--accent);
+  }
+  .img-slot-empty .slot-hint {
+    font-size: 10px; color: var(--muted);
+  }
+
+  .img-slot-preview {
+    display: none;
+    position: relative;
+  }
+  .img-slot-preview img {
+    width: 100%; height: 120px;
+    object-fit: cover; display: block;
+  }
+  .img-slot-preview .img-slot-toolbar {
+    position: absolute; top: 6px; right: 6px;
+    display: flex; gap: 5px;
+  }
+  .img-slot-btn {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: none; cursor: pointer;
+    font-size: 13px; display: flex;
+    align-items: center; justify-content: center;
+    transition: opacity 0.15s;
+  }
+  .img-slot-btn.delete { background: #e53935; color: white; }
+  .img-slot-btn.move   { background: rgba(0,0,0,0.5); color: white; cursor: grab; }
+  .img-slot-btn:hover  { opacity: 0.85; }
+
+  .img-slot-caption {
+    padding: 6px 10px;
+    font-size: 11px; color: var(--muted);
+    background: var(--cream);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .img-slot-caption span { font-weight: 600; color: var(--accent); }
+
+  /* 리플렛 안 이미지 섹션 */
+  .leaflet-img-grid-1 { width: 100%; border-radius: 10px; overflow: hidden; margin: 4px 0; }
+  .leaflet-img-grid-1 img { width: 100%; height: 200px; object-fit: cover; display: block; }
+
+  .leaflet-img-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 4px 0; }
+  .leaflet-img-grid-2 img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; display: block; }
+
+  .leaflet-img-grid-3 { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 6px; margin: 4px 0; }
+  .leaflet-img-grid-3 img:first-child { grid-column: 1 / -1; width: 100%; height: 160px; object-fit: cover; border-radius: 8px; display: block; }
+  .leaflet-img-grid-3 img:not(:first-child) { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; display: block; }
+
+  /* drag-over highlight */
+  .img-slot.drag-over { border-color: var(--accent); background: var(--warm); }
+
   /* ── QUICK SHARE WIZARD ── */
   .quick-share-box {
     margin-top: 18px;
@@ -1979,6 +2055,78 @@
         <div class="swatch" data-primary="#b71c1c" data-secondary="#ff6f00" data-bg="#fff8f0" style="background:linear-gradient(135deg,#b71c1c 50%,#ff6f00 50%)" title="레드&오렌지"></div>
         <div class="swatch" data-primary="#006064" data-secondary="#4dd0e1" data-bg="#e0f7fa" style="background:linear-gradient(135deg,#006064 50%,#4dd0e1 50%)" title="틸&아쿠아"></div>
         <div class="swatch" data-primary="#37474f" data-secondary="#90a4ae" data-bg="#f5f7f8" style="background:linear-gradient(135deg,#37474f 50%,#90a4ae 50%)" title="모노 슬레이트"></div>
+      </div>
+    </div>
+
+    <!-- 이미지 업로드 -->
+    <div class="form-section">
+      <div class="form-section-label">홍보 이미지 (최대 3장)</div>
+      <div class="img-upload-section">
+
+        <!-- 슬롯 1 -->
+        <div class="img-slot" id="img-slot-0">
+          <div class="img-slot-empty" onclick="triggerImgUpload(0)">
+            <div class="slot-icon">🖼️</div>
+            <div class="slot-label">이미지 1 클릭 또는 드래그</div>
+            <div class="slot-hint">JPG · PNG · WEBP · 최대 5MB</div>
+          </div>
+          <div class="img-slot-preview" id="img-preview-0">
+            <img id="img-thumb-0" src="" alt="">
+            <div class="img-slot-toolbar">
+              <button class="img-slot-btn delete" onclick="removeImg(0)" title="삭제">✕</button>
+            </div>
+            <div class="img-slot-caption">
+              <span id="img-name-0">이미지 1</span>
+              <span id="img-size-0"></span>
+            </div>
+          </div>
+          <input type="file" id="img-input-0" accept="image/*" style="display:none" onchange="onImgSelected(0,this)">
+        </div>
+
+        <!-- 슬롯 2 -->
+        <div class="img-slot" id="img-slot-1">
+          <div class="img-slot-empty" onclick="triggerImgUpload(1)">
+            <div class="slot-icon">🖼️</div>
+            <div class="slot-label">이미지 2 클릭 또는 드래그</div>
+            <div class="slot-hint">JPG · PNG · WEBP · 최대 5MB</div>
+          </div>
+          <div class="img-slot-preview" id="img-preview-1">
+            <img id="img-thumb-1" src="" alt="">
+            <div class="img-slot-toolbar">
+              <button class="img-slot-btn delete" onclick="removeImg(1)" title="삭제">✕</button>
+            </div>
+            <div class="img-slot-caption">
+              <span id="img-name-1">이미지 2</span>
+              <span id="img-size-1"></span>
+            </div>
+          </div>
+          <input type="file" id="img-input-1" accept="image/*" style="display:none" onchange="onImgSelected(1,this)">
+        </div>
+
+        <!-- 슬롯 3 -->
+        <div class="img-slot" id="img-slot-2">
+          <div class="img-slot-empty" onclick="triggerImgUpload(2)">
+            <div class="slot-icon">🖼️</div>
+            <div class="slot-label">이미지 3 클릭 또는 드래그</div>
+            <div class="slot-hint">JPG · PNG · WEBP · 최대 5MB</div>
+          </div>
+          <div class="img-slot-preview" id="img-preview-2">
+            <img id="img-thumb-2" src="" alt="">
+            <div class="img-slot-toolbar">
+              <button class="img-slot-btn delete" onclick="removeImg(2)" title="삭제">✕</button>
+            </div>
+            <div class="img-slot-caption">
+              <span id="img-name-2">이미지 3</span>
+              <span id="img-size-2"></span>
+            </div>
+          </div>
+          <input type="file" id="img-input-2" accept="image/*" style="display:none" onchange="onImgSelected(2,this)">
+        </div>
+
+        <div style="font-size:11px;color:var(--muted);line-height:1.6;">
+          💡 이미지는 리플렛 본문 중간에 자동 배치됩니다.<br>
+          리플렛 생성 후 즉시 반영됩니다.
+        </div>
       </div>
     </div>
 
@@ -3587,6 +3735,13 @@ function renderLeaflet(d, brand, contact) {
           <div class="feature-grid">${featuresHTML}</div>
         </div>
 
+        ${uploadedImages.filter(Boolean).length > 0 ? `
+        <div class="leaflet-divider"></div>
+        <div>
+          <div class="leaflet-section-title" style="color:${s}">홍보 이미지</div>
+          ${buildImgGridHTML()}
+        </div>` : ''}
+
         ${infoRowsHTML ? `
         <div class="leaflet-divider"></div>
         <div>
@@ -3730,6 +3885,90 @@ function shareKakao() {
 // Close modal on overlay click
 document.getElementById('share-modal-overlay').addEventListener('click', function(e) {
   if (e.target === this) closeShareModal();
+});
+
+// ── IMAGE UPLOAD ──
+const uploadedImages = [null, null, null]; // base64 strings
+
+function triggerImgUpload(idx) {
+  document.getElementById(`img-input-${idx}`).click();
+}
+
+function onImgSelected(idx, input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('⚠️ 파일 크기가 5MB를 초과합니다'); return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    uploadedImages[idx] = e.target.result;
+    showImgSlot(idx, e.target.result, file.name, file.size);
+    showToast(`✅ 이미지 ${idx+1} 업로드 완료! 리플렛을 재생성하면 반영됩니다.`);
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+function showImgSlot(idx, src, name, size) {
+  document.getElementById(`img-thumb-${idx}`).src = src;
+  document.getElementById(`img-name-${idx}`).textContent = name.length > 18 ? name.slice(0,15)+'...' : name;
+  document.getElementById(`img-size-${idx}`).textContent = (size/1024 < 1024)
+    ? Math.round(size/1024)+'KB'
+    : (size/1024/1024).toFixed(1)+'MB';
+  document.getElementById(`img-slot-${idx}`).classList.add('has-image');
+  document.querySelector(`#img-slot-${idx} .img-slot-empty`).style.display = 'none';
+  document.getElementById(`img-preview-${idx}`).style.display = 'block';
+}
+
+function removeImg(idx) {
+  uploadedImages[idx] = null;
+  document.getElementById(`img-thumb-${idx}`).src = '';
+  document.getElementById(`img-slot-${idx}`).classList.remove('has-image');
+  document.querySelector(`#img-slot-${idx} .img-slot-empty`).style.display = 'flex';
+  document.getElementById(`img-preview-${idx}`).style.display = 'none';
+  showToast(`🗑️ 이미지 ${idx+1} 삭제됨`);
+}
+
+function buildImgGridHTML() {
+  const imgs = uploadedImages.filter(Boolean);
+  if (imgs.length === 0) return '';
+  const rounded = 'border-radius:8px; display:block; width:100%; object-fit:cover;';
+  if (imgs.length === 1) {
+    return `<div class="leaflet-img-grid-1"><img src="${imgs[0]}" style="${rounded} height:200px;"></div>`;
+  }
+  if (imgs.length === 2) {
+    return `<div class="leaflet-img-grid-2">
+      <img src="${imgs[0]}" style="${rounded} height:140px;">
+      <img src="${imgs[1]}" style="${rounded} height:140px;">
+    </div>`;
+  }
+  return `<div class="leaflet-img-grid-3">
+    <img src="${imgs[0]}" style="${rounded} height:160px;">
+    <img src="${imgs[1]}" style="${rounded} height:110px;">
+    <img src="${imgs[2]}" style="${rounded} height:110px;">
+  </div>`;
+}
+
+// 드래그&드롭 지원
+[0,1,2].forEach(idx => {
+  const slot = document.getElementById(`img-slot-${idx}`);
+  slot.addEventListener('dragover', e => { e.preventDefault(); slot.classList.add('drag-over'); });
+  slot.addEventListener('dragleave', ()  => slot.classList.remove('drag-over'));
+  slot.addEventListener('drop', e => {
+    e.preventDefault();
+    slot.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (!file || !file.type.startsWith('image/')) { showToast('⚠️ 이미지 파일만 업로드 가능합니다'); return; }
+    if (file.size > 5*1024*1024) { showToast('⚠️ 파일 크기가 5MB를 초과합니다'); return; }
+    const reader = new FileReader();
+    reader.onload = e2 => {
+      uploadedImages[idx] = e2.target.result;
+      showImgSlot(idx, e2.target.result, file.name, file.size);
+      showToast(`✅ 이미지 ${idx+1} 업로드 완료! 리플렛을 재생성하면 반영됩니다.`);
+    };
+    reader.readAsDataURL(file);
+  });
 });
 
 // ── SETTINGS ──

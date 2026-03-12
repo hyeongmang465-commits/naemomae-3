@@ -1390,6 +1390,119 @@
   }
   .btn-deploy-finish:hover { opacity: 0.9; }
 
+  /* ── SETTINGS MODAL ── */
+  .settings-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20,8,35,0.72);
+    z-index: 1400;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+  }
+  .settings-modal-overlay.open { display: flex; }
+
+  .settings-modal {
+    background: white;
+    border-radius: 20px;
+    width: 460px;
+    max-width: 96vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 32px 100px rgba(61,18,102,0.35);
+    animation: fadeInUp 0.3s ease;
+  }
+  .settings-modal-header {
+    background: linear-gradient(135deg,#1e0a2e,#4a1080);
+    padding: 22px 28px 18px;
+    color: white;
+    border-radius: 20px 20px 0 0;
+    position: sticky; top:0; z-index:2;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .settings-modal-header h2 {
+    font-family: 'Noto Serif KR',serif;
+    font-size: 18px; font-weight: 900;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .settings-modal-close {
+    background: rgba(255,255,255,0.12); border: none;
+    color: white; font-size: 16px; cursor: pointer;
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .settings-modal-close:hover { background: rgba(255,255,255,0.22); }
+
+  .settings-body { padding: 24px 28px 28px; display: flex; flex-direction: column; gap: 20px; }
+
+  .settings-section {
+    border: 1.5px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+  }
+  .settings-section-title {
+    background: var(--cream);
+    padding: 11px 16px;
+    font-size: 12px; font-weight: 700;
+    color: var(--accent); letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .settings-section-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+
+  .settings-field label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--muted); margin-bottom: 5px;
+  }
+  .settings-field input {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    font-size: 13px; font-family: 'Noto Sans KR',sans-serif;
+    outline: none; color: var(--ink); transition: border-color 0.2s;
+  }
+  .settings-field input:focus { border-color: var(--accent); }
+  .settings-field .field-hint {
+    font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.5;
+  }
+
+  /* 미리보기 카드 */
+  .settings-preview-tel {
+    display: flex; align-items: center; gap: 12px;
+    background: linear-gradient(135deg,#3d1266,#7b2fa0);
+    color: white; border-radius: 10px; padding: 12px 14px;
+    font-size: 14px; font-weight: 700;
+  }
+  .settings-preview-kakao {
+    display: flex; align-items: center; gap: 12px;
+    background: #FEE500; color: #3C1E1E;
+    border-radius: 10px; padding: 12px 14px;
+    font-size: 14px; font-weight: 700;
+  }
+
+  .settings-save-btn {
+    width: 100%; padding: 13px;
+    background: linear-gradient(135deg,#3d1266,#7b2fa0);
+    color: white; border: none; border-radius: 10px;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    font-family: 'Noto Serif KR',serif;
+    box-shadow: 0 4px 16px rgba(61,18,102,0.3);
+    transition: opacity 0.15s;
+    margin-top: 4px;
+  }
+  .settings-save-btn:hover { opacity: 0.9; }
+
+  /* 헤더 설정 버튼 */
+  .header-settings-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.1); color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px; padding: 7px 14px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: 'Noto Sans KR',sans-serif;
+    transition: background 0.15s; white-space: nowrap;
+  }
+  .header-settings-btn:hover { background: rgba(255,255,255,0.18); }
+
   /* ── CONTACT / INQUIRY ── */
   .contact-modal-overlay {
     display: none;
@@ -1763,9 +1876,10 @@
     </div>
   </div>
   <div class="header-tag">LEAFLET AI GENERATOR</div>
-  <button class="header-contact-btn" onclick="openContactModal()">
-    📞 상담 문의
-  </button>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button class="header-settings-btn" onclick="openSettingsModal()">⚙️ 설정</button>
+    <button class="header-contact-btn" onclick="openContactModal()">📞 상담 문의</button>
+  </div>
 </header>
 
 <div class="app-layout">
@@ -2009,6 +2123,90 @@
 </div>
 
 <!-- ══════════════════════════════════════
+     ⚙️ 설정 모달 (전화·카카오 커스터마이즈)
+════════════════════════════════════════ -->
+<div class="settings-modal-overlay" id="settings-modal-overlay">
+  <div class="settings-modal">
+    <div class="settings-modal-header">
+      <h2>⚙️ 상담 연락처 설정</h2>
+      <button class="settings-modal-close" onclick="closeSettingsModal()">✕</button>
+    </div>
+    <div class="settings-body">
+
+      <!-- 전화번호 -->
+      <div class="settings-section">
+        <div class="settings-section-title">📞 상담 전화번호</div>
+        <div class="settings-section-body">
+          <div class="settings-field">
+            <label>전화번호 (숫자와 - 만 입력)</label>
+            <input type="tel" id="setting-tel"
+                   placeholder="예: 010-5078-5320"
+                   oninput="updateSettingsPreview()">
+            <div class="field-hint">저장 후 📞 상담 문의 버튼과 플로팅 버튼에 즉시 반영됩니다.</div>
+          </div>
+          <!-- 미리보기 -->
+          <div class="settings-preview-tel" id="preview-tel">
+            <span>📞</span>
+            <span id="preview-tel-num">010-5078-5320</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 카카오 채널 -->
+      <div class="settings-section">
+        <div class="settings-section-title">💬 카카오톡 채널 URL</div>
+        <div class="settings-section-body">
+          <div class="settings-field">
+            <label>카카오 채널 초대 링크</label>
+            <input type="url" id="setting-kakao"
+                   placeholder="https://invite.kakao.com/tc/..."
+                   oninput="updateSettingsPreview()">
+            <div class="field-hint">
+              카카오채널 관리자 → 채널 홈 → <strong>채널 URL 복사</strong><br>
+              또는 채널 초대링크 (https://invite.kakao.com/tc/...)
+            </div>
+          </div>
+          <!-- 카카오 채널 URL 안내 -->
+          <div style="background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:11px 14px;font-size:12px;color:#7a5000;line-height:1.7;">
+            💡 <strong>카카오채널 URL 찾는 방법</strong><br>
+            카카오톡 앱 → 채널 검색 → 내 채널 → <strong>채널 공유</strong> → 링크 복사
+          </div>
+          <!-- 미리보기 -->
+          <div class="settings-preview-kakao" id="preview-kakao">
+            <span>💬</span>
+            <span id="preview-kakao-url">카카오톡 채널 상담</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 운영시간 -->
+      <div class="settings-section">
+        <div class="settings-section-title">🕐 운영시간 안내 문구</div>
+        <div class="settings-section-body">
+          <div class="settings-field">
+            <label>운영시간</label>
+            <input type="text" id="setting-hours"
+                   placeholder="예: 평일 09:00 ~ 18:00"
+                   oninput="updateSettingsPreview()">
+          </div>
+          <div class="settings-field">
+            <label>추가 안내 (선택)</label>
+            <input type="text" id="setting-hours-sub"
+                   placeholder="예: 주말·공휴일은 카카오톡으로 문의해 주세요"
+                   oninput="updateSettingsPreview()">
+          </div>
+        </div>
+      </div>
+
+      <button class="settings-save-btn" onclick="saveSettings()">
+        ✅ 설정 저장하기
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
      📞 상담 문의 모달
 ════════════════════════════════════════ -->
 <div class="contact-modal-overlay" id="contact-modal-overlay">
@@ -2024,16 +2222,16 @@
     <div class="contact-modal-body">
 
       <!-- 전화 연결 -->
-      <a class="contact-tel-btn" href="tel:01050785320">
+      <a class="contact-tel-btn" id="contact-tel-link" href="tel:01050785320">
         <div class="contact-tel-icon">📞</div>
         <div>
-          <div class="contact-tel-text-main">010-5078-5320</div>
+          <div class="contact-tel-text-main" id="contact-tel-display">010-5078-5320</div>
           <span class="contact-tel-text-sub">클릭하면 바로 전화 연결됩니다</span>
         </div>
       </a>
 
       <!-- 카카오 채널 -->
-      <a class="contact-kakao-btn" href="https://invite.kakao.com/tc/Jm89uZEn79" target="_blank">
+      <a class="contact-kakao-btn" id="contact-kakao-link" href="https://invite.kakao.com/tc/Jm89uZEn79" target="_blank">
         <div class="contact-kakao-icon">💬</div>
         <div>
           <div class="contact-kakao-text-main">카카오톡 채널 상담</div>
@@ -2044,8 +2242,8 @@
       <!-- 운영시간 -->
       <div class="contact-hours">
         🕐 <strong>상담 운영시간</strong><br>
-        평일 09:00 ~ 18:00<br>
-        <span style="font-size:11px;color:var(--muted);">주말·공휴일은 카카오톡 채널로 문의해 주세요</span>
+        <span id="contact-hours-display">평일 09:00 ~ 18:00</span><br>
+        <span style="font-size:11px;color:var(--muted);" id="contact-hours-sub-display">주말·공휴일은 카카오톡 채널로 문의해 주세요</span>
       </div>
 
     </div>
@@ -2057,13 +2255,13 @@
   <div class="floating-actions" id="floating-actions">
     <div style="display:flex;align-items:center;gap:8px;">
       <span class="floating-label">전화 상담</span>
-      <a class="floating-tel-btn" href="tel:01050785320">
-        📞 010-5078-5320
+      <a class="floating-tel-btn" id="floating-tel-link" href="tel:01050785320">
+        📞 <span id="floating-tel-num">010-5078-5320</span>
       </a>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
       <span class="floating-label">카카오 상담</span>
-      <a class="floating-kakao-btn" href="https://invite.kakao.com/tc/Jm89uZEn79" target="_blank">
+      <a class="floating-kakao-btn" id="floating-kakao-link" href="https://invite.kakao.com/tc/Jm89uZEn79" target="_blank">
         💬 카카오톡 채널
       </a>
     </div>
@@ -3533,6 +3731,102 @@ function shareKakao() {
 document.getElementById('share-modal-overlay').addEventListener('click', function(e) {
   if (e.target === this) closeShareModal();
 });
+
+// ── SETTINGS ──
+const CONTACT_DEFAULTS = {
+  tel:      '010-5078-5320',
+  kakao:    'https://invite.kakao.com/tc/Jm89uZEn79',
+  hours:    '평일 09:00 ~ 18:00',
+  hoursSub: '주말·공휴일은 카카오톡 채널로 문의해 주세요'
+};
+
+// localStorage에서 설정 불러오기 (없으면 기본값)
+function loadContactSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('contact_settings') || '{}');
+    return Object.assign({}, CONTACT_DEFAULTS, saved);
+  } catch(e) { return CONTACT_DEFAULTS; }
+}
+
+// 화면 전체에 설정값 적용
+function applyContactSettings(s) {
+  const telClean = s.tel.replace(/[^0-9]/g,'');
+
+  // 문의 모달
+  const telLink = document.getElementById('contact-tel-link');
+  if (telLink) telLink.href = 'tel:' + telClean;
+  const telDisp = document.getElementById('contact-tel-display');
+  if (telDisp) telDisp.textContent = s.tel;
+  const kakaoLink = document.getElementById('contact-kakao-link');
+  if (kakaoLink) kakaoLink.href = s.kakao;
+  const hoursDisp = document.getElementById('contact-hours-display');
+  if (hoursDisp) hoursDisp.textContent = s.hours;
+  const hoursSubDisp = document.getElementById('contact-hours-sub-display');
+  if (hoursSubDisp) hoursSubDisp.textContent = s.hoursSub;
+
+  // 플로팅 버튼
+  const floatTel = document.getElementById('floating-tel-link');
+  if (floatTel) floatTel.href = 'tel:' + telClean;
+  const floatTelNum = document.getElementById('floating-tel-num');
+  if (floatTelNum) floatTelNum.textContent = s.tel;
+  const floatKakao = document.getElementById('floating-kakao-link');
+  if (floatKakao) floatKakao.href = s.kakao;
+}
+
+function openSettingsModal() {
+  const s = loadContactSettings();
+  document.getElementById('setting-tel').value       = s.tel;
+  document.getElementById('setting-kakao').value     = s.kakao;
+  document.getElementById('setting-hours').value     = s.hours;
+  document.getElementById('setting-hours-sub').value = s.hoursSub;
+  updateSettingsPreview();
+  document.getElementById('settings-modal-overlay').classList.add('open');
+}
+function closeSettingsModal() {
+  document.getElementById('settings-modal-overlay').classList.remove('open');
+}
+document.getElementById('settings-modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeSettingsModal();
+});
+
+function updateSettingsPreview() {
+  const tel   = document.getElementById('setting-tel').value   || CONTACT_DEFAULTS.tel;
+  const kakao = document.getElementById('setting-kakao').value || CONTACT_DEFAULTS.kakao;
+  document.getElementById('preview-tel-num').textContent  = tel;
+  // kakao 미리보기: 도메인만 표시
+  let kakaoShort = kakao;
+  try { kakaoShort = new URL(kakao).hostname + '...'; } catch(e) {}
+  document.getElementById('preview-kakao-url').textContent = kakaoShort;
+}
+
+function saveSettings() {
+  const s = {
+    tel:      document.getElementById('setting-tel').value.trim()       || CONTACT_DEFAULTS.tel,
+    kakao:    document.getElementById('setting-kakao').value.trim()     || CONTACT_DEFAULTS.kakao,
+    hours:    document.getElementById('setting-hours').value.trim()     || CONTACT_DEFAULTS.hours,
+    hoursSub: document.getElementById('setting-hours-sub').value.trim() || CONTACT_DEFAULTS.hoursSub,
+  };
+  // 전화번호 기본 검증
+  const telDigits = s.tel.replace(/[^0-9]/g,'');
+  if (telDigits.length < 9) {
+    showToast('⚠️ 올바른 전화번호를 입력해주세요'); return;
+  }
+  // 카카오 URL 기본 검증
+  if (s.kakao && !s.kakao.startsWith('http')) {
+    showToast('⚠️ 카카오 URL은 https://로 시작해야 합니다'); return;
+  }
+  try { localStorage.setItem('contact_settings', JSON.stringify(s)); } catch(e) {}
+  applyContactSettings(s);
+  closeSettingsModal();
+  showToast('✅ 설정이 저장되었습니다! 문의 버튼에 즉시 반영됩니다.');
+}
+
+// 페이지 로드 시 저장된 설정 적용
+(function initContactSettings() {
+  const s = loadContactSettings();
+  // 기본값도 항상 적용
+  setTimeout(() => applyContactSettings(s), 0);
+})();
 
 // ── CONTACT MODAL ──
 function openContactModal() {

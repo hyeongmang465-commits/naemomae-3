@@ -3728,17 +3728,9 @@ function renderLeaflet(d, brand, contact) {
           <p class="leaflet-body-text">${d.section1_text || ''}</p>
         </div>
 
-        <div class="leaflet-divider"></div>
-
-        <div>
-          <div class="leaflet-section-title" style="color:${s}">주요 특징</div>
-          <div class="feature-grid">${featuresHTML}</div>
-        </div>
-
         ${uploadedImages.filter(Boolean).length > 0 ? `
         <div class="leaflet-divider"></div>
         <div>
-          <div class="leaflet-section-title" style="color:${s}">홍보 이미지</div>
           ${buildImgGridHTML()}
         </div>` : ''}
 
@@ -3933,20 +3925,20 @@ function removeImg(idx) {
 function buildImgGridHTML() {
   const imgs = uploadedImages.filter(Boolean);
   if (imgs.length === 0) return '';
-  const rounded = 'border-radius:8px; display:block; width:100%; object-fit:cover;';
+  const rounded = 'border-radius:10px; display:block; width:100%; object-fit:cover;';
   if (imgs.length === 1) {
-    return `<div class="leaflet-img-grid-1"><img src="${imgs[0]}" style="${rounded} height:200px;"></div>`;
+    return `<div style="border-radius:10px;overflow:hidden;"><img src="${imgs[0]}" style="${rounded} height:300px;"></div>`;
   }
   if (imgs.length === 2) {
-    return `<div class="leaflet-img-grid-2">
-      <img src="${imgs[0]}" style="${rounded} height:140px;">
-      <img src="${imgs[1]}" style="${rounded} height:140px;">
+    return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <img src="${imgs[0]}" style="${rounded} height:220px;">
+      <img src="${imgs[1]}" style="${rounded} height:220px;">
     </div>`;
   }
-  return `<div class="leaflet-img-grid-3">
-    <img src="${imgs[0]}" style="${rounded} height:160px;">
-    <img src="${imgs[1]}" style="${rounded} height:110px;">
-    <img src="${imgs[2]}" style="${rounded} height:110px;">
+  return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+    <img src="${imgs[0]}" style="${rounded} height:260px;grid-column:1/-1;">
+    <img src="${imgs[1]}" style="${rounded} height:170px;">
+    <img src="${imgs[2]}" style="${rounded} height:170px;">
   </div>`;
 }
 
@@ -4426,27 +4418,45 @@ document.getElementById('save-modal-overlay').addEventListener('click', function
   if (e.target === this) closeSaveModal();
 });
 
-// ── PNG 저장 (html2canvas) ──
+// ── PNG 저장 (html2canvas 고화질) ──
 async function savePNG() {
   const el = document.getElementById('leaflet-content');
-  if (!el.classList.contains('active')) return;
+  if (!el.classList.contains('active')) { showToast('⚠️ 먼저 리플렛을 생성해주세요'); return; }
   closeSaveModal();
-  showToast('⏳ 이미지 생성 중...');
+  showToast('⏳ 고화질 이미지 생성 중... 잠시 기다려주세요');
   try {
     const target = el.querySelector('div');
+
+    // 현재 실제 크기 측정
+    const rect = target.getBoundingClientRect();
+    const scale = 4; // 4배 고화질 (기존 2배 → 4배)
+
     const canvas = await html2canvas(target, {
-      scale: 2,
+      scale: scale,
       useCORS: true,
-      backgroundColor: null,
-      logging: false
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      imageTimeout: 15000,
+      width: rect.width,
+      height: rect.height,
+      scrollX: 0,
+      scrollY: -window.scrollY,
+      onclone: (doc) => {
+        // 클론된 문서의 이미지가 완전히 로드되도록 대기
+        const imgs = doc.querySelectorAll('img');
+        imgs.forEach(img => { img.style.imageRendering = 'crisp-edges'; });
+      }
     });
+
+    // PNG 최고 품질로 저장
     const link = document.createElement('a');
     const brand = document.getElementById('brand-name').value.trim() || '내몸애맞게';
     const ts = new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','');
     link.download = `${brand}_리플렛_${ts}.png`;
-    link.href = canvas.toDataURL('image/png');
+    link.href = canvas.toDataURL('image/png', 1.0);
     link.click();
-    showToast('✅ PNG 이미지가 저장되었습니다!');
+    showToast('✅ 고화질 PNG 이미지가 저장되었습니다!');
   } catch(e) {
     showToast('⚠️ 이미지 저장 중 오류가 발생했습니다');
     console.error(e);

@@ -3559,66 +3559,91 @@
     <!-- 2단 본문 -->
     <div class="share-modal-body">
 
-      <!-- 왼쪽: 리플렛 미리보기 -->
+      <!-- 왼쪽: PNG 미리보기 -->
       <div class="share-leaflet-preview">
-        <div class="share-leaflet-preview-inner" id="share-leaflet-clone">
-          <div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">
-            리플렛을 생성하면 여기에 미리보기가 표시됩니다
+        <div style="width:100%;display:flex;flex-direction:column;align-items:center;gap:14px;">
+
+          <!-- PNG 생성 전 안내 -->
+          <div id="share-png-placeholder" style="width:100%;max-width:340px;border-radius:12px;border:2px dashed #c9a227;padding:40px 20px;text-align:center;color:var(--muted);">
+            <div style="font-size:36px;margin-bottom:10px;">🖼️</div>
+            <div style="font-size:13px;font-weight:700;color:var(--accent);">PNG 이미지 미리보기</div>
+            <div style="font-size:11px;margin-top:6px;">아래 버튼을 눌러 이미지를 생성하세요</div>
           </div>
+
+          <!-- PNG 생성 후 미리보기 -->
+          <div id="share-png-preview" style="display:none;width:100%;max-width:340px;">
+            <img id="share-png-img" src="" alt="리플렛 이미지"
+              style="width:100%;border-radius:12px;box-shadow:0 8px 32px rgba(61,18,102,0.25);display:block;">
+          </div>
+
+          <!-- PNG 생성 버튼 -->
+          <button id="share-gen-btn" onclick="generateSharePNG()"
+            style="width:100%;max-width:340px;padding:13px;background:linear-gradient(135deg,#3d1266,#7b2fa0);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;box-shadow:0 4px 16px rgba(61,18,102,0.3);display:flex;align-items:center;justify-content:center;gap:8px;">
+            <span id="share-gen-icon">🖼️</span>
+            <span id="share-gen-label">이미지 생성하기</span>
+          </button>
+
+          <!-- 이미지 저장 버튼 (생성 후 표시) -->
+          <button id="share-save-btn" onclick="saveSharePNG()" style="display:none;width:100%;max-width:340px;padding:11px;background:white;color:var(--accent);border:2px solid var(--accent);border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">
+            💾 이미지 저장 (다운로드)
+          </button>
+
         </div>
       </div>
 
-      <!-- 오른쪽: 공유 패널 -->
+      <!-- 오른쪽: 전송 안내 패널 -->
       <div class="share-panel">
 
-        <div class="share-panel-title">📤 공유 설정</div>
+        <div class="share-panel-title">💬 카카오톡 전송 방법</div>
 
-        <!-- 공유 링크 -->
+        <!-- 추천인 입력 -->
         <div>
-          <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:5px;">🔗 공유 링크</label>
-          <div style="display:flex;gap:6px;">
-            <input type="text" id="share-link-input" placeholder="https://..." style="flex:1;padding:8px 10px;font-size:12px;border:1.5px solid var(--border);border-radius:7px;outline:none;font-family:'Noto Sans KR',sans-serif;" oninput="updateSharePreview()">
-            <button onclick="useHomepageLink()" style="padding:8px 10px;background:var(--cream);border:1.5px solid var(--border);border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;color:var(--ink);font-family:'Noto Sans KR',sans-serif;">불러오기</button>
+          <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:5px;">👤 추천인 이름 (선택)</label>
+          <input type="text" id="share-ref-input" placeholder="예: 홍길동 (없으면 비워두세요)"
+            style="width:100%;padding:9px 11px;font-size:12px;border:1.5px solid var(--border);border-radius:8px;outline:none;font-family:'Noto Sans KR',sans-serif;"
+            oninput="updateSharePreview()">
+          <div style="font-size:10.5px;color:var(--muted);margin-top:4px;">입력 시 이미지에 추천인 이름이 표시됩니다</div>
+        </div>
+
+        <!-- 단계별 전송 가이드 -->
+        <div style="display:flex;flex-direction:column;gap:10px;">
+
+          <div style="background:#fff8e1;border:1.5px solid #ffe082;border-radius:10px;padding:13px 14px;">
+            <div style="font-size:12px;font-weight:800;color:#7a5000;margin-bottom:8px;">📱 카카오톡 전송 순서</div>
+
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;gap:10px;align-items:flex-start;">
+                <div style="width:22px;height:22px;border-radius:50%;background:#FEE500;color:#3C1E1E;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+                <div style="font-size:12px;color:#5a4000;line-height:1.6;">왼쪽 <strong>이미지 생성하기</strong> 클릭<br><span style="font-size:11px;opacity:.7;">리플렛이 PNG 이미지로 변환됩니다</span></div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:flex-start;">
+                <div style="width:22px;height:22px;border-radius:50%;background:#FEE500;color:#3C1E1E;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+                <div style="font-size:12px;color:#5a4000;line-height:1.6;"><strong>이미지 저장</strong> 클릭하여 다운로드<br><span style="font-size:11px;opacity:.7;">갤러리 또는 다운로드 폴더에 저장됩니다</span></div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:flex-start;">
+                <div style="width:22px;height:22px;border-radius:50%;background:#FEE500;color:#3C1E1E;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+                <div style="font-size:12px;color:#5a4000;line-height:1.6;"><strong>카카오톡 열기</strong> → 대화창 선택<br><span style="font-size:11px;opacity:.7;">상대방 또는 단체 채팅방을 엽니다</span></div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:flex-start;">
+                <div style="width:22px;height:22px;border-radius:50%;background:#FEE500;color:#3C1E1E;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div>
+                <div style="font-size:12px;color:#5a4000;line-height:1.6;"><strong>＋ 버튼 → 앨범</strong> → 저장된 이미지 선택 → 전송<br><span style="font-size:11px;opacity:.7;">이미지가 리플렛 원본 그대로 전달됩니다</span></div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- 추천인 -->
-        <div>
-          <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:5px;">👤 추천인</label>
-          <input type="text" id="share-ref-input" placeholder="예: 홍길동 (없으면 비워두세요)" style="width:100%;padding:8px 10px;font-size:12px;border:1.5px solid var(--border);border-radius:7px;outline:none;font-family:'Noto Sans KR',sans-serif;" oninput="updateSharePreview()">
-        </div>
+          <!-- 카카오 함께 보낼 메시지 -->
+          <div class="kakao-msg-box">
+            <div class="kakao-msg-box-label">💬 함께 보낼 메시지 (복사해서 사용)</div>
+            <div class="kakao-bubble" id="share-kakao-msg" style="font-size:12px;"></div>
+            <button onclick="copyShareMsg()" style="margin-top:8px;width:100%;padding:8px;background:#FEE500;color:#3C1E1E;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">
+              📋 메시지 복사
+            </button>
+          </div>
 
-        <!-- URL 미리보기 -->
-        <div class="share-url-box" id="share-preview-url">링크를 입력하면 표시됩니다</div>
-
-        <!-- 카카오 메시지 미리보기 -->
-        <div class="kakao-msg-box">
-          <div class="kakao-msg-box-label">💬 카카오톡 전송 메시지 미리보기</div>
-          <div class="kakao-bubble" id="share-kakao-msg">링크와 추천인을 입력하면 메시지가 표시됩니다.</div>
-        </div>
-
-        <!-- 버튼 -->
-        <div class="share-btn-row">
-          <button class="btn-kakao" onclick="shareKakao()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.69 2 11.25c0 2.88 1.9 5.41 4.77 6.87l-1.2 4.48 4.95-3.27c.47.07.96.1 1.48.1 5.52 0 10-3.69 10-8.25S17.52 3 12 3z"/></svg>
-            카카오톡으로 공유
-          </button>
-          <button class="btn-copy-msg" onclick="copyShareMsg()">📋 메시지 복사</button>
-          <button class="btn-copy-link" onclick="copyShareLink()">🔗 링크만 복사</button>
-        </div>
-
-        <!-- 공유 방법 안내 -->
-        <div style="background:#f0ebff;border:1.5px solid #c9a227;border-radius:10px;padding:13px 14px;font-size:11.5px;line-height:1.8;color:#3d1266;">
-          <div style="font-weight:800;margin-bottom:6px;font-size:12px;">💡 카카오톡 공유 방법</div>
-          <div><strong>① URL이 있는 경우</strong> (추천)<br>
-          왼쪽 링크란에 Vercel/GitHub URL 입력 → 버튼 클릭 → 메시지 붙여넣기</div>
-          <div style="margin-top:6px;"><strong>② URL이 없는 경우</strong><br>
-          버튼 클릭 → 리플렛 새 탭 열림 → 화면 캡처 후 카카오톡 전송<br>
-          또는 💾 저장 → HTML 다운로드 → 파일로 전송</div>
         </div>
 
         <div id="copy-success" style="display:none;padding:10px;background:#e8f5e9;border-radius:8px;font-size:12px;color:#2e7d32;text-align:center;font-weight:600;">
-          ✅ 복사 완료! 카카오톡에 붙여넣기 하세요.
+          ✅ 복사 완료! 카카오톡에 붙여넣기(Ctrl+V) 하세요.
         </div>
 
       </div><!-- /share-panel -->
@@ -3919,27 +3944,26 @@ function toggleEdit() {
 }
 
 // ── SHARE MODAL ──
+// ── 카카오 공유 모달 ──
+let sharePNGDataURL = null; // 생성된 PNG 저장
+
 function openShareModal() {
   const el = document.getElementById('leaflet-content');
   if (!el.classList.contains('active')) {
     showToast('⚠️ 먼저 리플렛을 생성해주세요'); return;
   }
-
-  // 리플렛 HTML 복사 → 왼쪽 미리보기에 삽입
-  const clone = document.getElementById('share-leaflet-clone');
-  clone.innerHTML = el.innerHTML;
-  // 크기 조정 (미리보기용 축소)
-  const inner = clone.querySelector('div');
-  if (inner) {
-    inner.style.fontSize = '85%';
-    inner.style.minHeight = 'auto';
-  }
-
-  // 링크·추천인 폼에서 자동 불러오기
-  const hp       = document.getElementById('homepage-url').value.trim();
+  // 추천인 자동 불러오기
   const referrer = document.getElementById('referrer-name').value.trim();
-  document.getElementById('share-link-input').value = hp || '';
-  document.getElementById('share-ref-input').value  = referrer || '';
+  document.getElementById('share-ref-input').value = referrer || '';
+
+  // PNG 미리보기 초기화
+  sharePNGDataURL = null;
+  document.getElementById('share-png-placeholder').style.display = 'block';
+  document.getElementById('share-png-preview').style.display     = 'none';
+  document.getElementById('share-save-btn').style.display        = 'none';
+  document.getElementById('share-gen-icon').textContent          = '🖼️';
+  document.getElementById('share-gen-label').textContent         = '이미지 생성하기';
+  document.getElementById('share-gen-btn').disabled              = false;
 
   updateSharePreview();
   document.getElementById('copy-success').style.display = 'none';
@@ -3951,98 +3975,127 @@ function closeShareModal() {
 }
 
 function updateSharePreview() {
-  const brand    = document.getElementById('brand-name').value.trim() || '(주)내몸애맞게';
-  const purpose  = selectedPurpose || '내몸애맞게 서비스';
-  let   link     = document.getElementById('share-link-input').value.trim();
-  const ref      = document.getElementById('share-ref-input').value.trim();
+  const brand   = document.getElementById('brand-name').value.trim() || '(주)내몸애맞게';
+  const purpose = selectedPurpose || '내몸애맞게 서비스';
+  const ref     = (document.getElementById('share-ref-input')?.value || '').trim();
 
-  // 추천인 파라미터 추가
-  let fullLink = link;
-  if (ref && fullLink) {
-    const sep = fullLink.includes('?') ? '&' : '?';
-    fullLink  = fullLink + sep + 'ref=' + encodeURIComponent(ref);
-  }
-
-  // URL 미리보기
-  document.getElementById('share-preview-url').textContent = fullLink || '링크를 입력해주세요';
-
-  // 카카오 메시지 미리보기
   const msg = ref
-    ? `안녕하세요 😊\n${ref}님이 보내드리는 리플렛입니다 🦋\n\n[${brand}]\n${purpose} 관련 정보를 확인해보세요!\n\n🔗 ${fullLink || '(링크 입력 필요)'}\n\n궁금하신 점은 언제든지 문의해주세요 ✨`
-    : `안녕하세요 😊\n[${brand}] 리플렛을 공유합니다 🦋\n\n${purpose} 관련 정보를 확인해보세요!\n\n🔗 ${fullLink || '(링크 입력 필요)'}\n\n궁금하신 점은 언제든지 문의해주세요 ✨`;
+    ? `안녕하세요 😊\n${ref}님이 보내드리는 [${brand}] 리플렛입니다 🦋\n\n${purpose} 관련 정보를 이미지로 확인해보세요!\n\n궁금하신 점은 언제든지 문의해주세요 ✨`
+    : `안녕하세요 😊\n[${brand}] 리플렛을 공유합니다 🦋\n\n${purpose} 관련 정보를 이미지로 확인해보세요!\n\n궁금하신 점은 언제든지 문의해주세요 ✨`;
 
-  document.getElementById('share-kakao-msg').textContent = msg;
-  // 메인 카카오 프리뷰도 동기화
-  const mainPreview = document.getElementById('kakao-msg-preview');
-  if (mainPreview) mainPreview.textContent = msg;
+  const msgEl = document.getElementById('share-kakao-msg');
+  if (msgEl) msgEl.textContent = msg;
 }
 
-function useHomepageLink() {
-  const hp = document.getElementById('homepage-url').value.trim();
-  if (!hp) { showToast('⚠️ 좌측 폼에 홈페이지 URL을 먼저 입력해주세요'); return; }
-  document.getElementById('share-link-input').value = hp;
-  updateSharePreview();
-}
+// PNG 생성 (공유용)
+async function generateSharePNG() {
+  const el = document.getElementById('leaflet-content');
+  if (!el.classList.contains('active')) return;
 
-function getShareFullLink() {
-  let link = document.getElementById('share-link-input').value.trim();
-  const ref = document.getElementById('share-ref-input').value.trim();
-  if (ref && link) {
-    const sep = link.includes('?') ? '&' : '?';
-    link = link + sep + 'ref=' + encodeURIComponent(ref);
+  const btn   = document.getElementById('share-gen-btn');
+  const icon  = document.getElementById('share-gen-icon');
+  const label = document.getElementById('share-gen-label');
+
+  btn.disabled   = true;
+  icon.textContent  = '⏳';
+  label.textContent = '이미지 생성 중...';
+
+  try {
+    const target = el.querySelector('div');
+
+    // 애니메이션 고정
+    const nodes  = Array.from(target.querySelectorAll('*'));
+    const backup = nodes.map(n => ({
+      opacity: n.style.opacity, transform: n.style.transform,
+      animation: n.style.animation, transition: n.style.transition
+    }));
+    nodes.forEach(n => {
+      n.style.animation = 'none'; n.style.transition = 'none'; n.style.transform = 'none';
+      if (parseFloat(window.getComputedStyle(n).opacity) < 0.99) n.style.opacity = '1';
+    });
+    target.getBoundingClientRect(); // 강제 리플로우
+
+    const SCALE  = Math.max(window.devicePixelRatio * 2, 4);
+    const canvas = await html2canvas(target, {
+      scale: SCALE, useCORS: true, allowTaint: true,
+      backgroundColor: '#ffffff', logging: false, imageTimeout: 20000,
+      width: target.offsetWidth, height: target.scrollHeight,
+      scrollX: 0, scrollY: 0, foreignObjectRendering: false,
+      onclone(doc) {
+        const s = doc.createElement('style');
+        s.textContent = `*{-webkit-font-smoothing:antialiased!important;text-rendering:geometricPrecision!important;animation:none!important;transition:none!important;}[class*="fade"],[class*="delay"]{opacity:1!important;transform:none!important;}`;
+        doc.head.appendChild(s);
+      }
+    });
+
+    // 복원
+    nodes.forEach((n, i) => {
+      n.style.opacity = backup[i].opacity; n.style.transform = backup[i].transform;
+      n.style.animation = backup[i].animation; n.style.transition = backup[i].transition;
+    });
+
+    sharePNGDataURL = canvas.toDataURL('image/png', 1.0);
+
+    // 미리보기 표시
+    document.getElementById('share-png-img').src         = sharePNGDataURL;
+    document.getElementById('share-png-placeholder').style.display = 'none';
+    document.getElementById('share-png-preview').style.display     = 'block';
+    document.getElementById('share-save-btn').style.display        = 'block';
+
+    icon.textContent  = '✅';
+    label.textContent = '이미지 재생성';
+    btn.disabled      = false;
+    showToast('✅ 이미지 생성 완료! 저장 후 카카오톡으로 전송하세요.');
+
+  } catch(e) {
+    icon.textContent  = '⚠️';
+    label.textContent = '이미지 생성하기';
+    btn.disabled      = false;
+    showToast('⚠️ 이미지 생성 실패. 다시 시도해주세요.');
+    console.error(e);
   }
-  return link;
 }
 
-function copyShareLink() {
-  const link = getShareFullLink();
-  if (!link) { showToast('⚠️ 공유할 링크를 입력해주세요'); return; }
-  navigator.clipboard.writeText(link).then(() => showCopySuccess('🔗 링크가 복사되었습니다!')).catch(() => {
-    const ta = document.createElement('textarea'); ta.value = link;
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-    showCopySuccess('🔗 링크가 복사되었습니다!');
-  });
+// PNG 저장 (다운로드)
+function saveSharePNG() {
+  if (!sharePNGDataURL) { showToast('⚠️ 먼저 이미지를 생성해주세요'); return; }
+  const brand = document.getElementById('brand-name').value.trim() || '내몸애맞게';
+  const ref   = (document.getElementById('share-ref-input')?.value || '').trim();
+  const a     = document.createElement('a');
+  a.download  = `${brand}${ref ? '_' + ref : ''}_리플렛.png`;
+  a.href      = sharePNGDataURL;
+  a.click();
+  showToast('💾 이미지가 저장되었습니다! 카카오톡 앨범에서 선택해 전송하세요.');
 }
 
 function copyShareMsg() {
-  const msg = document.getElementById('share-kakao-msg').textContent || '';
-  if (!msg || msg.includes('입력해주세요')) { showToast('⚠️ 링크를 먼저 입력해주세요'); return; }
-  navigator.clipboard.writeText(msg).then(() => showCopySuccess('📋 메시지가 복사되었습니다!')).catch(() => {
-    const ta = document.createElement('textarea'); ta.value = msg;
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-    showCopySuccess('📋 메시지가 복사되었습니다!');
-  });
+  const msg = document.getElementById('share-kakao-msg')?.textContent || '';
+  if (!msg) return;
+  navigator.clipboard.writeText(msg)
+    .then(() => {
+      const suc = document.getElementById('copy-success');
+      suc.textContent = '✅ 메시지 복사 완료! 카카오톡에 붙여넣기(Ctrl+V) 하세요.';
+      suc.style.display = 'block';
+      setTimeout(() => suc.style.display = 'none', 4000);
+      showToast('📋 메시지가 복사되었습니다!');
+    })
+    .catch(() => showToast('⚠️ 복사에 실패했습니다'));
 }
 
 function showCopySuccess(msg) {
   const el = document.getElementById('copy-success');
-  el.textContent = '✅ ' + msg.replace('✅ ','') + ' 카카오톡에 붙여넣기 하세요.';
+  if (!el) return;
+  el.textContent = msg;
   el.style.display = 'block';
-  setTimeout(() => el.style.display = 'none', 3500);
+  setTimeout(() => el.style.display = 'none', 4000);
   showToast(msg);
 }
 
-function shareKakao() {
-  const link  = getShareFullLink();
-  const msg   = document.getElementById('share-kakao-msg').textContent || '';
-  if (!link)  { showToast('⚠️ 공유할 링크를 입력해주세요'); return; }
-
-  if (window.Kakao && window.Kakao.Share) {
-    Kakao.Share.sendDefault({
-      objectType: 'text', text: msg,
-      link: { mobileWebUrl: link, webUrl: link }
-    });
-  } else {
-    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-    if (isMobile) {
-      window.location.href = `kakaolink://send?msg=${encodeURIComponent(msg)}`;
-    } else {
-      navigator.clipboard.writeText(msg).then(() => {
-        showCopySuccess('📋 카카오 메시지가 복사되었습니다!');
-      }).catch(() => showToast('⚠️ 메시지 복사에 실패했습니다'));
-    }
-  }
-}
+// 미사용 함수 유지 (다른 곳에서 호출 가능성)
+function useHomepageLink() {}
+function getShareFullLink() { return document.getElementById('homepage-url')?.value.trim() || ''; }
+function copyShareLink() { copyShareMsg(); }
+function shareKakao()    { generateSharePNG(); }
 
 // Close modal on overlay click
 document.getElementById('share-modal-overlay').addEventListener('click', function(e) {
@@ -4707,55 +4760,6 @@ async function savePNG() {
     showToast('⚠️ PNG 저장 실패 — HTML 저장을 이용해주세요');
     console.error(e);
   }
-}
-
-// ── 카카오 공유 ──
-// 핵심 원리: 리플렛을 독립 HTML 파일로 저장 → GitHub/Vercel URL로 공유
-// URL이 없을 땐 리플렛 뷰어 새 탭 + 메시지 클립보드 복사
-function shareKakao() {
-  const html     = buildStandaloneHTML();
-  if (!html) { showToast('⚠️ 먼저 리플렛을 생성해주세요'); return; }
-
-  const brand    = document.getElementById('brand-name').value.trim() || '(주)내몸애맞게';
-  const shareUrl = getShareFullLink();
-  const ref      = (document.getElementById('share-ref-input')?.value || document.getElementById('referrer-name').value || '').trim();
-
-  const msg = ref
-    ? `안녕하세요 😊\n${ref}님이 [${brand}] 리플렛을 보내드립니다 🦋\n${shareUrl ? '\n🔗 ' + shareUrl : ''}\n\n궁금하신 점은 언제든지 문의해주세요 ✨`
-    : `안녕하세요 😊\n[${brand}] 리플렛을 공유합니다 🦋\n${shareUrl ? '\n🔗 ' + shareUrl : ''}\n\n궁금하신 점은 언제든지 문의해주세요 ✨`;
-
-  // 1) 리플렛을 새 탭으로 열기 (상대방에게 보여줄 내용 확인용)
-  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-  window.open(URL.createObjectURL(blob), '_blank');
-
-  // 2) Kakao SDK가 있고 URL이 있으면 SDK로 직접 공유
-  if (window.Kakao?.Share && shareUrl) {
-    Kakao.Share.sendDefault({
-      objectType: 'feed',
-      content: {
-        title      : `🦋 ${brand} 리플렛`,
-        description: `안녕하세요! ${ref ? ref + '님이 보내드리는 ' : ''}리플렛입니다 ✨`,
-        imageUrl   : '',
-        link       : { mobileWebUrl: shareUrl, webUrl: shareUrl }
-      },
-      buttons: [{
-        title: '리플렛 보기',
-        link : { mobileWebUrl: shareUrl, webUrl: shareUrl }
-      }]
-    });
-    return;
-  }
-
-  // 3) SDK 없음 → 메시지 클립보드 복사 + 안내
-  navigator.clipboard.writeText(msg).then(() => {
-    const suc = document.getElementById('copy-success');
-    if (suc) {
-      suc.textContent = '✅ 메시지 복사 완료! 카카오톡 열고 Ctrl+V(붙여넣기) 후 전송하세요.';
-      suc.style.display = 'block';
-      setTimeout(() => suc.style.display = 'none', 6000);
-    }
-    showToast('💬 카카오톡에 붙여넣기(Ctrl+V) 하여 전송하세요!');
-  }).catch(() => showToast('⚠️ 복사 실패 — 메시지를 직접 입력해 주세요'));
 }
 
 // ── HTML 다운로드 ──

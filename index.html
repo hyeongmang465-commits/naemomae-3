@@ -2086,9 +2086,22 @@
         <label>핵심 홍보 내용 *</label>
         <textarea id="main-content" placeholder="홍보하고 싶은 내용을 자유롭게 입력하세요.&#10;예: 신메뉴 출시, 할인 이벤트, 수강생 모집 등"></textarea>
       </div>
-      <div>
-        <label>연락처 / 주소 (선택)</label>
-        <input type="text" id="contact-info" placeholder="예: 02-1234-5678 / 서울 강남구 ...">
+
+      <!-- 하단 연락처 카드 -->
+      <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:13px 14px;display:flex;flex-direction:column;gap:9px;">
+        <div style="font-size:11px;font-weight:800;color:var(--accent);letter-spacing:1px;">📇 하단 연락처 카드</div>
+        <div>
+          <label style="font-size:11.5px;">직함 / 소개</label>
+          <input type="text" id="expert-title" placeholder="예: 인체 운동에너지 조절 전문가 멘토" value="인체 운동에너지 조절 전문가 멘토">
+        </div>
+        <div>
+          <label style="font-size:11.5px;">이름</label>
+          <input type="text" id="expert-name" placeholder="예: 김 강산" value="김 강산">
+        </div>
+        <div>
+          <label style="font-size:11.5px;">연락처</label>
+          <input type="text" id="contact-info" placeholder="예: 010-5078-5320" value="010-5078-5320">
+        </div>
       </div>
     </div>
 
@@ -3707,10 +3720,13 @@ function renderLeaflet(d, brand, contact) {
   const bg = selectedColors.bg;
   const textOnPrimary = '#ffffff';
 
-  const homepageUrl = document.getElementById('homepage-url').value.trim();
-  const youtubeUrl  = document.getElementById('youtube-url').value.trim();
-  const referrer    = document.getElementById('referrer-name').value.trim();
-  const qrTargetUrl = document.getElementById('qr-url').value.trim() || homepageUrl;
+  const homepageUrl  = document.getElementById('homepage-url').value.trim();
+  const youtubeUrl   = document.getElementById('youtube-url').value.trim();
+  const referrer     = document.getElementById('referrer-name').value.trim();
+  const qrTargetUrl  = document.getElementById('qr-url').value.trim() || homepageUrl;
+  const expertTitle  = document.getElementById('expert-title')?.value.trim() || '인체 운동에너지 조절 전문가 멘토';
+  const expertName   = document.getElementById('expert-name')?.value.trim()  || '김 강산';
+  const expertPhone  = document.getElementById('contact-info')?.value.trim() || contact || '010-5078-5320';
 
   // Build QR URL string (include referrer as query param if set)
   let qrFinalUrl = qrTargetUrl;
@@ -3790,13 +3806,13 @@ function renderLeaflet(d, brand, contact) {
         <div style="display:flex;flex-direction:column;gap:5px;">
           <div style="font-size:11px; letter-spacing:2px; opacity:0.55; text-transform:uppercase;">CONTACT</div>
           <div style="font-family:'Noto Serif KR',serif; font-size:14px; font-weight:700;">
-            인체 운동에너지 조절 전문가 멘토
+            ${expertTitle}
           </div>
           <div style="font-family:'Noto Serif KR',serif; font-size:22px; font-weight:900; color:${s}; letter-spacing:1px; line-height:1.2;">
-            김 강산
+            ${expertName}
           </div>
           <div style="font-size:14px; font-weight:700; margin-top:2px; display:flex;align-items:center;gap:6px;">
-            📞 ${contact || '010-5078-5320'}
+            📞 ${expertPhone}
           </div>
           ${referrer ? `<div style="font-size:12px; color:${s}; font-weight:700; margin-top:2px;">👤 ${referrer} 추천</div>` : ''}
           <div style="font-size:11px; opacity:0.45; margin-top:2px;">${d.footer_tagline || ''}</div>

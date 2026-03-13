@@ -2109,6 +2109,13 @@
     <div class="form-section">
       <div class="form-section-label">링크 & 공유 설정</div>
       <div>
+        <label>▶ 유튜브 URL</label>
+        <div class="input-with-icon">
+          <span class="input-prefix">▶</span>
+          <input type="text" id="youtube-url" placeholder="https://youtube.com/@channel" value="https://www.youtube.com/@kir0856" oninput="updateSharePreview()">
+        </div>
+      </div>
+      <div>
         <label>👤 추천인 이름 (QR코드에 포함)</label>
         <div class="input-with-icon">
           <span class="input-prefix">👤</span>
@@ -2117,7 +2124,6 @@
       </div>
       <!-- 고정 URL (숨김) -->
       <input type="hidden" id="homepage-url" value="https://tjhcsonm.gensparkspace.com/">
-      <input type="hidden" id="youtube-url"  value="https://www.youtube.com/@kir0856">
       <input type="hidden" id="qr-url"        value="https://tjhcsonm.gensparkspace.com/">
     </div>
 

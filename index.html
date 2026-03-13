@@ -2123,7 +2123,7 @@
         </div>
       </div>
       <!-- 고정 URL (숨김) -->
-      <input type="hidden" id="homepage-url" value="https://tjhcsonm.gensparkspace.com/">
+      
     </div>
 
     <!-- 디자인 톤 -->
@@ -3708,10 +3708,9 @@ function renderLeaflet(d, brand, contact) {
   const bg = selectedColors.bg;
   const textOnPrimary = '#ffffff';
 
-  const homepageUrl  = document.getElementById('homepage-url').value.trim();
   const youtubeUrl   = document.getElementById('youtube-url').value.trim();
   const referrer     = document.getElementById('referrer-name').value.trim();
-  const qrTargetUrl  = document.getElementById('youtube-url').value.trim() || homepageUrl;
+  const qrTargetUrl  = youtubeUrl;
   const expertTitle  = document.getElementById('expert-title')?.value.trim() || '인체 운동에너지 조절 전문가 멘토';
   const expertName   = document.getElementById('expert-name')?.value.trim()  || '김 강산';
   const expertPhone  = document.getElementById('contact-info')?.value.trim() || contact || '010-5078-5320';
@@ -3867,14 +3866,9 @@ function updateSharePreview() {
   const brand      = document.getElementById('brand-name').value.trim() || '(주)내몸애맞게';
   const purpose    = selectedPurpose || '내몸애맞게 서비스';
   const ref        = (document.getElementById('share-ref-input')?.value || '').trim();
-  const homepageUrl = document.getElementById('homepage-url')?.value.trim() || '';
-  const youtubeUrl  = document.getElementById('youtube-url')?.value.trim()  || '';
+  const youtubeUrl = document.getElementById('youtube-url')?.value.trim() || '';
 
-  // 링크 블록 조합
-  const linkLines = [];
-  if (homepageUrl) linkLines.push(`🌐 홈페이지: ${homepageUrl}`);
-  if (youtubeUrl)  linkLines.push(`▶ 유튜브: ${youtubeUrl}`);
-  const linkBlock = linkLines.length ? '\n\n' + linkLines.join('\n') : '';
+  const linkBlock = youtubeUrl ? `\n\n▶ 유튜브: ${youtubeUrl}` : '';
 
   const msg = ref
     ? `안녕하세요 😊\n${ref}님이 보내드리는 [${brand}] 리플렛입니다 🦋\n\n${purpose} 관련 정보를 이미지로 확인해보세요!${linkBlock}\n\n궁금하신 점은 언제든지 문의해주세요 ✨`
@@ -3990,7 +3984,7 @@ function showCopySuccess(msg) {
 
 // 미사용 함수 유지 (다른 곳에서 호출 가능성)
 function useHomepageLink() {}
-function getShareFullLink() { return document.getElementById('homepage-url')?.value.trim() || ''; }
+function getShareFullLink() { return document.getElementById('youtube-url')?.value.trim() || ''; }
 function copyShareLink() { copyShareMsg(); }
 function shareKakao()    { generateSharePNG(); }
 
@@ -4235,7 +4229,7 @@ function toggleQuickShare() {
   document.getElementById('qs-toggle-icon').textContent = qsOpen ? '▲' : '▼';
   if (qsOpen) {
     // pre-fill from main form
-    const hp = document.getElementById('homepage-url').value.trim();
+    const hp = document.getElementById('youtube-url').value.trim();
     const ref = document.getElementById('referrer-name').value.trim();
     if (hp)  document.getElementById('qs-url').value = hp;
     if (ref) document.getElementById('qs-ref').value = ref;
@@ -4246,7 +4240,7 @@ function toggleQuickShare() {
 
 function qsSyncURL() {
   const v = document.getElementById('qs-url').value.trim();
-  document.getElementById('homepage-url').value = v;
+  document.getElementById('youtube-url').value = v;
   document.getElementById('youtube-url').value = v;
   qsUpdatePreview();
 }
@@ -4356,7 +4350,7 @@ function switchVcPhase(n) {
 function applyVcURL() {
   const val = document.getElementById('vc-url-input').value.trim();
   if (!val) { showToast('⚠️ Vercel URL을 입력해주세요'); return; }
-  document.getElementById('homepage-url').value = val;
+  document.getElementById('youtube-url').value = val;
   document.getElementById('youtube-url').value = val;
   const dep = document.getElementById('deploy-hp-input');
   if (dep) dep.value = val;
@@ -4403,7 +4397,7 @@ function switchGhPhase(n) {
 function applyGhURL() {
   const val = document.getElementById('gh-url-confirm').value.trim();
   if (!val) { showToast('⚠️ URL을 입력해주세요'); return; }
-  document.getElementById('homepage-url').value = val;
+  document.getElementById('youtube-url').value = val;
   document.getElementById('youtube-url').value = val;
   const dep = document.getElementById('deploy-hp-input');
   if (dep) dep.value = val;
@@ -4487,7 +4481,7 @@ function goToStep(n) {
 function applyDeployURL() {
   const val = document.getElementById('deploy-hp-input').value.trim();
   if (!val) { showToast('⚠️ URL을 입력해주세요'); return; }
-  document.getElementById('homepage-url').value = val;
+  document.getElementById('youtube-url').value = val;
   document.getElementById('youtube-url').value = val;
   showToast('✅ 홈페이지 URL이 폼에 적용되었습니다');
   updateKakaoPreview();
@@ -4503,7 +4497,7 @@ function applyDeployRef() {
 
 function updateKakaoPreview() {
   const brand   = document.getElementById('brand-name').value.trim() || '(주)내몸애맞게';
-  const hp      = document.getElementById('homepage-url').value.trim()
+  const hp      = document.getElementById('youtube-url').value.trim()
                   || document.getElementById('deploy-hp-input')?.value.trim()
                   || 'https://your-site.netlify.app';
   const ref     = document.getElementById('referrer-name').value.trim()
@@ -4537,7 +4531,7 @@ function copyKakaoMsg() {
 }
 
 // sync preview when form inputs change
-['homepage-url','referrer-name','brand-name'].forEach(id => {
+['youtube-url','referrer-name','brand-name'].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener('input', updateKakaoPreview);
 });

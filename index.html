@@ -2124,7 +2124,6 @@
       </div>
       <!-- 고정 URL (숨김) -->
       <input type="hidden" id="homepage-url" value="https://tjhcsonm.gensparkspace.com/">
-      <input type="hidden" id="qr-url"        value="https://tjhcsonm.gensparkspace.com/">
     </div>
 
     <!-- 디자인 톤 -->
@@ -3712,7 +3711,7 @@ function renderLeaflet(d, brand, contact) {
   const homepageUrl  = document.getElementById('homepage-url').value.trim();
   const youtubeUrl   = document.getElementById('youtube-url').value.trim();
   const referrer     = document.getElementById('referrer-name').value.trim();
-  const qrTargetUrl  = document.getElementById('qr-url').value.trim() || homepageUrl;
+  const qrTargetUrl  = document.getElementById('youtube-url').value.trim() || homepageUrl;
   const expertTitle  = document.getElementById('expert-title')?.value.trim() || '인체 운동에너지 조절 전문가 멘토';
   const expertName   = document.getElementById('expert-name')?.value.trim()  || '김 강산';
   const expertPhone  = document.getElementById('contact-info')?.value.trim() || contact || '010-5078-5320';
@@ -4248,7 +4247,7 @@ function toggleQuickShare() {
 function qsSyncURL() {
   const v = document.getElementById('qs-url').value.trim();
   document.getElementById('homepage-url').value = v;
-  document.getElementById('qr-url').value = v;
+  document.getElementById('youtube-url').value = v;
   qsUpdatePreview();
 }
 function qsSyncRef() {
@@ -4358,7 +4357,7 @@ function applyVcURL() {
   const val = document.getElementById('vc-url-input').value.trim();
   if (!val) { showToast('⚠️ Vercel URL을 입력해주세요'); return; }
   document.getElementById('homepage-url').value = val;
-  document.getElementById('qr-url').value = val;
+  document.getElementById('youtube-url').value = val;
   const dep = document.getElementById('deploy-hp-input');
   if (dep) dep.value = val;
   updateKakaoPreview();
@@ -4405,7 +4404,7 @@ function applyGhURL() {
   const val = document.getElementById('gh-url-confirm').value.trim();
   if (!val) { showToast('⚠️ URL을 입력해주세요'); return; }
   document.getElementById('homepage-url').value = val;
-  document.getElementById('qr-url').value = val;
+  document.getElementById('youtube-url').value = val;
   const dep = document.getElementById('deploy-hp-input');
   if (dep) dep.value = val;
   updateKakaoPreview();
@@ -4489,7 +4488,7 @@ function applyDeployURL() {
   const val = document.getElementById('deploy-hp-input').value.trim();
   if (!val) { showToast('⚠️ URL을 입력해주세요'); return; }
   document.getElementById('homepage-url').value = val;
-  document.getElementById('qr-url').value = val;
+  document.getElementById('youtube-url').value = val;
   showToast('✅ 홈페이지 URL이 폼에 적용되었습니다');
   updateKakaoPreview();
 }

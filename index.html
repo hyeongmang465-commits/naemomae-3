@@ -2112,14 +2112,14 @@
         <label>🌐 홈페이지 URL</label>
         <div class="input-with-icon">
           <span class="input-prefix">🌐</span>
-          <input type="text" id="homepage-url" placeholder="https://www.example.com">
+          <input type="text" id="homepage-url" placeholder="https://www.example.com" oninput="updateSharePreview()">
         </div>
       </div>
       <div>
         <label>▶ 유튜브 URL</label>
         <div class="input-with-icon">
           <span class="input-prefix">▶</span>
-          <input type="text" id="youtube-url" placeholder="https://youtube.com/@channel">
+          <input type="text" id="youtube-url" placeholder="https://youtube.com/@channel" oninput="updateSharePreview()">
         </div>
       </div>
       <div>
@@ -3876,13 +3876,21 @@ function closeShareModal() {
 }
 
 function updateSharePreview() {
-  const brand   = document.getElementById('brand-name').value.trim() || '(주)내몸애맞게';
-  const purpose = selectedPurpose || '내몸애맞게 서비스';
-  const ref     = (document.getElementById('share-ref-input')?.value || '').trim();
+  const brand      = document.getElementById('brand-name').value.trim() || '(주)내몸애맞게';
+  const purpose    = selectedPurpose || '내몸애맞게 서비스';
+  const ref        = (document.getElementById('share-ref-input')?.value || '').trim();
+  const homepageUrl = document.getElementById('homepage-url')?.value.trim() || '';
+  const youtubeUrl  = document.getElementById('youtube-url')?.value.trim()  || '';
+
+  // 링크 블록 조합
+  const linkLines = [];
+  if (homepageUrl) linkLines.push(`🌐 홈페이지: ${homepageUrl}`);
+  if (youtubeUrl)  linkLines.push(`▶ 유튜브: ${youtubeUrl}`);
+  const linkBlock = linkLines.length ? '\n\n' + linkLines.join('\n') : '';
 
   const msg = ref
-    ? `안녕하세요 😊\n${ref}님이 보내드리는 [${brand}] 리플렛입니다 🦋\n\n${purpose} 관련 정보를 이미지로 확인해보세요!\n\n궁금하신 점은 언제든지 문의해주세요 ✨`
-    : `안녕하세요 😊\n[${brand}] 리플렛을 공유합니다 🦋\n\n${purpose} 관련 정보를 이미지로 확인해보세요!\n\n궁금하신 점은 언제든지 문의해주세요 ✨`;
+    ? `안녕하세요 😊\n${ref}님이 보내드리는 [${brand}] 리플렛입니다 🦋\n\n${purpose} 관련 정보를 이미지로 확인해보세요!${linkBlock}\n\n궁금하신 점은 언제든지 문의해주세요 ✨`
+    : `안녕하세요 😊\n[${brand}] 리플렛을 공유합니다 🦋\n\n${purpose} 관련 정보를 이미지로 확인해보세요!${linkBlock}\n\n궁금하신 점은 언제든지 문의해주세요 ✨`;
 
   const msgEl = document.getElementById('share-kakao-msg');
   if (msgEl) msgEl.textContent = msg;

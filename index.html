@@ -2241,6 +2241,37 @@ function toggleFloating() {
 
 
 // ── HISTORY ──
+// ── 브라우저 저장 (localStorage) ──
+function saveToLocal() {
+  const el = document.getElementById('leaflet-content');
+  if (!el.classList.contains('active')) {
+    showToast('⚠️ 먼저 리플렛을 생성해주세요'); return;
+  }
+  const brand   = document.getElementById('brand-name').value.trim() || '리플렛';
+  const purpose = selectedPurpose || '';
+  const id      = 'leaflet_' + Date.now();
+  const item    = {
+    id,
+    title  : brand,
+    purpose: purpose,
+    date   : new Date().toLocaleString('ko-KR'),
+    html   : el.innerHTML,
+    colors : { ...selectedColors }
+  };
+  try {
+    const existing = JSON.parse(localStorage.getItem('leaflet_saves') || '[]');
+    existing.unshift(item);
+    if (existing.length > 20) existing.splice(20);
+    localStorage.setItem('leaflet_saves', JSON.stringify(existing));
+    closeSaveModal();
+    showToast('💿 브라우저에 저장되었습니다! 📂 저장 목록에서 확인하세요.');
+    renderHistoryList();
+  } catch(e) {
+    showToast('⚠️ 저장 공간이 부족합니다');
+  }
+}
+
+// ── HISTORY ──
 function toggleHistory() {
   const panel = document.getElementById('history-panel');
   const isOpen = panel.classList.contains('open');

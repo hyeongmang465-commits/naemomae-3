@@ -1871,6 +1871,80 @@ async function generateSharePNG() {
   }
 }
 
+// ── 💾 저장하기 → PNG 저장 ──
+async function savePNG() {
+  const el = document.getElementById('leaflet-content');
+  if (!el.classList.contains('active')) {
+    showToast('⚠️ 먼저 리플렛을 생성해주세요'); return;
+  }
+  closeSaveModal();
+  showToast('⏳ 고화질 이미지 생성 중...');
+
+  try {
+    const target = el.querySelector('div');
+
+    // 애니메이션·opacity 임시 고정 (흐림 방지)
+    const nodes  = Array.from(target.querySelectorAll('*'));
+    const backup = nodes.map(n => ({
+      opacity: n.style.opacity, transform: n.style.transform,
+      animation: n.style.animation, transition: n.style.transition
+    }));
+    nodes.forEach(n => {
+      n.style.animation  = 'none';
+      n.style.transition = 'none';
+      n.style.transform  = 'none';
+      if (parseFloat(window.getComputedStyle(n).opacity) < 0.99) n.style.opacity = '1';
+    });
+    target.getBoundingClientRect(); // 강제 리플로우
+
+    const SCALE  = Math.max((window.devicePixelRatio || 1) * 2, 4);
+    const canvas = await html2canvas(target, {
+      scale              : SCALE,
+      useCORS            : true,
+      allowTaint         : true,
+      backgroundColor    : '#ffffff',
+      logging            : false,
+      imageTimeout       : 20000,
+      width              : target.offsetWidth,
+      height             : target.scrollHeight,
+      scrollX            : 0,
+      scrollY            : 0,
+      foreignObjectRendering: false,
+      onclone(doc) {
+        const s = doc.createElement('style');
+        s.textContent = `
+          * { -webkit-font-smoothing:antialiased!important;
+              text-rendering:geometricPrecision!important;
+              animation:none!important; transition:none!important; }
+          [class*="fade"],[class*="delay"] { opacity:1!important; transform:none!important; }
+        `;
+        doc.head.appendChild(s);
+      }
+    });
+
+    // 복원
+    nodes.forEach((n, i) => {
+      n.style.opacity    = backup[i].opacity;
+      n.style.transform  = backup[i].transform;
+      n.style.animation  = backup[i].animation;
+      n.style.transition = backup[i].transition;
+    });
+
+    const brand = document.getElementById('brand-name').value.trim() || '내몸애맞게';
+    const ts    = new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','');
+    const a     = document.createElement('a');
+    a.download  = `${brand}_리플렛_${ts}.png`;
+    a.href      = canvas.toDataURL('image/png', 1.0);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast('✅ 고화질 PNG 저장 완료!');
+  } catch(e) {
+    showToast('⚠️ PNG 저장 실패 — HTML 저장을 이용해주세요');
+    console.error(e);
+  }
+}
+
 // PNG 저장 (다운로드)
 function saveSharePNG() {
   if (!sharePNGDataURL) { showToast('⚠️ 먼저 이미지를 생성해주세요'); return; }

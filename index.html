@@ -2352,7 +2352,7 @@ function clearAllHistory() {
   showToast('🗑️ 전체 삭제되었습니다');
 }
 
-// ── 저장 목록 → 이미지 클립보드 복사 ──
+// ── 저장 목록 → 이미지 복사 ──
 async function copyHistoryPNG(id) {
   let saves = [];
   try { saves = JSON.parse(localStorage.getItem('leaflet_saves') || '[]'); } catch(e) {}
@@ -2372,7 +2372,6 @@ async function copyHistoryPNG(id) {
   wrap.innerHTML = item.html;
   document.body.appendChild(wrap);
 
-  // 폰트 로드 대기
   await document.fonts.ready;
   await new Promise(r => setTimeout(r, 300));
 
@@ -2380,7 +2379,6 @@ async function copyHistoryPNG(id) {
     const SCALE  = Math.max((window.devicePixelRatio || 1) * 2, 4);
     const target = wrap.querySelector('div') || wrap;
 
-    // 애니메이션 고정
     Array.from(target.querySelectorAll('*')).forEach(n => {
       n.style.animation  = 'none';
       n.style.transition = 'none';
@@ -2389,54 +2387,68 @@ async function copyHistoryPNG(id) {
     });
 
     const canvas = await html2canvas(target, {
-      scale              : SCALE,
-      useCORS            : true,
-      allowTaint         : true,
-      backgroundColor    : '#ffffff',
-      logging            : false,
-      imageTimeout       : 20000,
-      width              : 640,
-      height             : target.scrollHeight,
-      scrollX            : 0,
-      scrollY            : 0,
+      scale: SCALE, useCORS: true, allowTaint: true,
+      backgroundColor: '#ffffff', logging: false, imageTimeout: 20000,
+      width: 640, height: target.scrollHeight, scrollX: 0, scrollY: 0,
       foreignObjectRendering: false,
       onclone(doc) {
         const s = doc.createElement('style');
-        s.textContent = `
-          *{-webkit-font-smoothing:antialiased!important;
-            text-rendering:geometricPrecision!important;
-            animation:none!important;transition:none!important;}
-          [class*="fade"],[class*="delay"]{opacity:1!important;transform:none!important;}
-        `;
+        s.textContent = `*{-webkit-font-smoothing:antialiased!important;text-rendering:geometricPrecision!important;animation:none!important;transition:none!important;}[class*="fade"],[class*="delay"]{opacity:1!important;transform:none!important;}`;
         doc.head.appendChild(s);
       }
     });
 
-    // ── 클립보드에 PNG 복사 ──
-    canvas.toBlob(async (blob) => {
+    const dataURL = canvas.toDataURL('image/png', 1.0);
+    const brand   = item.title || '내몸애맞게';
+    const ts      = new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','');
+
+    // ── 방법 1: HTTPS 환경 → 클립보드 직접 복사 ──
+    if (location.protocol === 'https:' && navigator.clipboard?.write) {
       try {
-        await navigator.clipboard.write([
-          new ClipboardItem({ 'image/png': blob })
-        ]);
+        const res  = await fetch(dataURL);
+        const blob = await res.blob();
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
         showToast('✅ 이미지가 클립보드에 복사됐습니다! 카카오톡에 Ctrl+V 로 붙여넣기 하세요.');
-      } catch(clipErr) {
-        // 클립보드 API 미지원 시 → 다운로드로 대체
-        const ts = new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','');
-        const a  = document.createElement('a');
-        a.download = `${item.title}_리플렛_${ts}.png`;
-        a.href     = URL.createObjectURL(blob);
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        showToast('📥 클립보드 미지원 브라우저 — 이미지로 저장했습니다. 카카오톡에 파일로 전송하세요.');
-      }
-    }, 'image/png', 1.0);
+        document.body.removeChild(wrap);
+        return;
+      } catch(e) { /* 실패 시 아래로 */ }
+    }
+
+    // ── 방법 2: 새 창에 이미지 표시 → 우클릭/롱프레스으로 복사 ──
+    const html = `<!DOCTYPE html><html><head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>${brand} 리플렛 이미지</title>
+      <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#1a1a2e; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:20px; gap:16px; }
+        .guide { background:#FEE500; color:#3C1E1E; border-radius:12px; padding:14px 20px; font-family:sans-serif; font-size:14px; font-weight:700; text-align:center; max-width:640px; width:100%; line-height:1.8; }
+        .guide .sub { font-size:12px; font-weight:400; margin-top:4px; opacity:.7; }
+        .dl-btn { background:#3d1266; color:white; border:none; border-radius:10px; padding:12px 28px; font-size:14px; font-weight:700; cursor:pointer; font-family:sans-serif; }
+        img { max-width:640px; width:100%; border-radius:12px; box-shadow:0 8px 40px rgba(0,0,0,.5); display:block; }
+      </style>
+    </head><body>
+      <div class="guide">
+        💡 PC: 이미지 위에서 <strong>우클릭 → 이미지 복사</strong> 후 카카오톡에 붙여넣기<br>
+        📱 모바일: 이미지 <strong>길게 누르기 → 이미지 저장/복사</strong>
+        <div class="sub">또는 아래 버튼으로 바로 다운로드</div>
+      </div>
+      <a href="${dataURL}" download="${brand}_리플렛_${ts}.png">
+        <button class="dl-btn">💾 이미지 다운로드</button>
+      </a>
+      <img src="${dataURL}" alt="${brand} 리플렛">
+    </body></html>`;
+
+    const blob    = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const blobUrl = URL.createObjectURL(blob);
+    window.open(blobUrl, '_blank');
+    showToast('✅ 새 탭에서 이미지를 우클릭 → 복사 후 카카오톡에 붙여넣기 하세요!');
 
   } catch(e) {
     showToast('⚠️ 이미지 생성 실패 — 불러오기 후 저장하기를 이용해주세요');
     console.error(e);
   } finally {
-    document.body.removeChild(wrap);
+    if (document.body.contains(wrap)) document.body.removeChild(wrap);
   }
 }
 

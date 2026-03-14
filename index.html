@@ -1755,6 +1755,27 @@ function toggleEdit() {
   btn.style.background = editMode ? '#e8f5e9' : '';
 }
 
+// ── SAVE MODAL ──
+function openSaveModal() {
+  const el = document.getElementById('leaflet-content');
+  if (!el.classList.contains('active')) {
+    showToast('⚠️ 먼저 리플렛을 생성해주세요'); return;
+  }
+  document.getElementById('save-modal-overlay').classList.add('open');
+}
+
+function closeSaveModal() {
+  document.getElementById('save-modal-overlay').classList.remove('open');
+}
+
+// 오버레이 클릭 시 닫기
+document.addEventListener('DOMContentLoaded', () => {
+  const overlay = document.getElementById('save-modal-overlay');
+  if (overlay) overlay.addEventListener('click', e => {
+    if (e.target === overlay) closeSaveModal();
+  });
+});
+
 // ── SHARE MODAL ──
 // ── 카카오 공유 모달 ──
 let sharePNGDataURL = null; // 생성된 PNG 저장

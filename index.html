@@ -2299,6 +2299,7 @@ function renderHistoryList() {
       <div class="history-item-actions">
         <button class="history-action-btn" onclick="loadFromHistory('${item.id}')">📂 불러오기</button>
         <button class="history-action-btn" onclick="downloadHistoryHTML('${item.id}')">📄 HTML</button>
+        <button class="history-action-btn" onclick="copyHistoryPNG('${item.id}')" style="background:#FEE500;border-color:#FDD835;color:#3C1E1E;font-weight:700;">🖼️ 이미지 복사</button>
         <button class="history-action-btn danger" onclick="deleteHistoryItem('${item.id}')">🗑️</button>
       </div>
     </div>
@@ -2349,6 +2350,94 @@ function clearAllHistory() {
   localStorage.removeItem('leaflet_saves');
   renderHistoryList();
   showToast('🗑️ 전체 삭제되었습니다');
+}
+
+// ── 저장 목록 → 이미지 클립보드 복사 ──
+async function copyHistoryPNG(id) {
+  let saves = [];
+  try { saves = JSON.parse(localStorage.getItem('leaflet_saves') || '[]'); } catch(e) {}
+  const item = saves.find(s => s.id === id);
+  if (!item) return;
+
+  showToast('⏳ 이미지 생성 중...');
+
+  // 숨김 컨테이너에 리플렛 HTML 렌더링
+  const wrap = document.createElement('div');
+  wrap.style.cssText = `
+    position:fixed; left:-9999px; top:0;
+    width:640px; background:#fff;
+    font-family:'Noto Sans KR',sans-serif;
+    z-index:-1; visibility:hidden;
+  `;
+  wrap.innerHTML = item.html;
+  document.body.appendChild(wrap);
+
+  // 폰트 로드 대기
+  await document.fonts.ready;
+  await new Promise(r => setTimeout(r, 300));
+
+  try {
+    const SCALE  = Math.max((window.devicePixelRatio || 1) * 2, 4);
+    const target = wrap.querySelector('div') || wrap;
+
+    // 애니메이션 고정
+    Array.from(target.querySelectorAll('*')).forEach(n => {
+      n.style.animation  = 'none';
+      n.style.transition = 'none';
+      n.style.transform  = 'none';
+      if (parseFloat(window.getComputedStyle(n).opacity) < 0.99) n.style.opacity = '1';
+    });
+
+    const canvas = await html2canvas(target, {
+      scale              : SCALE,
+      useCORS            : true,
+      allowTaint         : true,
+      backgroundColor    : '#ffffff',
+      logging            : false,
+      imageTimeout       : 20000,
+      width              : 640,
+      height             : target.scrollHeight,
+      scrollX            : 0,
+      scrollY            : 0,
+      foreignObjectRendering: false,
+      onclone(doc) {
+        const s = doc.createElement('style');
+        s.textContent = `
+          *{-webkit-font-smoothing:antialiased!important;
+            text-rendering:geometricPrecision!important;
+            animation:none!important;transition:none!important;}
+          [class*="fade"],[class*="delay"]{opacity:1!important;transform:none!important;}
+        `;
+        doc.head.appendChild(s);
+      }
+    });
+
+    // ── 클립보드에 PNG 복사 ──
+    canvas.toBlob(async (blob) => {
+      try {
+        await navigator.clipboard.write([
+          new ClipboardItem({ 'image/png': blob })
+        ]);
+        showToast('✅ 이미지가 클립보드에 복사됐습니다! 카카오톡에 Ctrl+V 로 붙여넣기 하세요.');
+      } catch(clipErr) {
+        // 클립보드 API 미지원 시 → 다운로드로 대체
+        const ts = new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','');
+        const a  = document.createElement('a');
+        a.download = `${item.title}_리플렛_${ts}.png`;
+        a.href     = URL.createObjectURL(blob);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast('📥 클립보드 미지원 브라우저 — 이미지로 저장했습니다. 카카오톡에 파일로 전송하세요.');
+      }
+    }, 'image/png', 1.0);
+
+  } catch(e) {
+    showToast('⚠️ 이미지 생성 실패 — 불러오기 후 저장하기를 이용해주세요');
+    console.error(e);
+  } finally {
+    document.body.removeChild(wrap);
+  }
 }
 
 </script>

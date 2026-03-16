@@ -1963,31 +1963,93 @@ async function savePNG() {
       n.style.transition = backup[i].transition;
     });
 
-    const brand = document.getElementById('brand-name').value.trim() || '내몸애맞게';
-    const ts    = new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','');
-    const a     = document.createElement('a');
-    a.download  = `${brand}_리플렛_${ts}.png`;
-    a.href      = canvas.toDataURL('image/png', 1.0);
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    showToast('✅ 고화질 PNG 저장 완료!');
+    const brand   = document.getElementById('brand-name').value.trim() || '내몸애맞게';
+    const ts      = new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','');
+    const fname   = `${brand}_리플렛_${ts}.png`;
+    const dataURL = canvas.toDataURL('image/png', 1.0);
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      // 모바일: 새 탭에 이미지 표시 → 길게 눌러 저장
+      const html = `<!DOCTYPE html><html><head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>${brand} 리플렛</title>
+        <style>
+          *{margin:0;padding:0;box-sizing:border-box;}
+          body{background:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px;}
+          .tip{background:#FEE500;color:#3C1E1E;border-radius:12px;padding:14px 16px;font-family:sans-serif;font-size:14px;font-weight:700;text-align:center;width:100%;max-width:640px;line-height:1.9;}
+          .tip .sub{font-size:12px;font-weight:400;opacity:.7;margin-top:4px;}
+          img{width:100%;max-width:640px;border-radius:10px;box-shadow:0 6px 30px rgba(0,0,0,.5);display:block;}
+        </style>
+      </head><body>
+        <div class="tip">
+          📱 이미지를 <strong>길게 누르세요</strong><br>
+          → <strong>"이미지 저장"</strong> 또는 <strong>"사진에 추가"</strong> 선택<br>
+          → 카카오톡에서 갤러리로 전송
+          <div class="sub">저장 후 카카오톡 → 사진첨부로 전송하세요</div>
+        </div>
+        <img src="${dataURL}" alt="${brand} 리플렛">
+      </body></html>`;
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      window.open(URL.createObjectURL(blob), '_blank');
+      showToast('📱 새 탭에서 이미지를 길게 눌러 저장하세요!');
+    } else {
+      // PC: a.click() 다운로드
+      const a    = document.createElement('a');
+      a.download = fname;
+      a.href     = dataURL;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('✅ 고화질 PNG 저장 완료!');
+    }
   } catch(e) {
     showToast('⚠️ PNG 저장 실패: ' + e.message);
     console.error(e);
   }
 }
 
-// PNG 저장 (다운로드)
+// PNG 저장 (카카오 공유 모달)
 function saveSharePNG() {
   if (!sharePNGDataURL) { showToast('⚠️ 먼저 이미지를 생성해주세요'); return; }
-  const brand = document.getElementById('brand-name').value.trim() || '내몸애맞게';
-  const ref   = (document.getElementById('share-ref-input')?.value || '').trim();
-  const a     = document.createElement('a');
-  a.download  = `${brand}${ref ? '_' + ref : ''}_리플렛.png`;
-  a.href      = sharePNGDataURL;
-  a.click();
-  showToast('💾 이미지가 저장되었습니다! 카카오톡 앨범에서 선택해 전송하세요.');
+  const brand    = document.getElementById('brand-name').value.trim() || '내몸애맞게';
+  const ref      = (document.getElementById('share-ref-input')?.value || '').trim();
+  const fname    = `${brand}${ref ? '_' + ref : ''}_리플렛.png`;
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if (isMobile) {
+    const html = `<!DOCTYPE html><html><head>
+      <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>${brand} 리플렛</title>
+      <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{background:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px;gap:14px;}
+        .tip{background:#FEE500;color:#3C1E1E;border-radius:12px;padding:14px 16px;font-family:sans-serif;font-size:14px;font-weight:700;text-align:center;width:100%;max-width:640px;line-height:1.9;}
+        .tip .sub{font-size:12px;font-weight:400;opacity:.7;margin-top:4px;}
+        img{width:100%;max-width:640px;border-radius:10px;box-shadow:0 6px 30px rgba(0,0,0,.5);display:block;}
+      </style>
+    </head><body>
+      <div class="tip">
+        📱 이미지를 <strong>길게 누르세요</strong><br>
+        → <strong>"이미지 저장"</strong> 또는 <strong>"사진에 추가"</strong> 선택<br>
+        → 카카오톡에서 갤러리로 전송
+        <div class="sub">저장 후 카카오톡 → 사진첨부로 전송하세요</div>
+      </div>
+      <img src="${sharePNGDataURL}" alt="${brand} 리플렛">
+    </body></html>`;
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    window.open(URL.createObjectURL(blob), '_blank');
+    showToast('📱 새 탭에서 이미지를 길게 눌러 저장하세요!');
+  } else {
+    const a    = document.createElement('a');
+    a.download = fname;
+    a.href     = sharePNGDataURL;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast('💾 이미지가 저장되었습니다! 카카오톡 앨범에서 선택해 전송하세요.');
+  }
 }
 
 function copyShareMsg() {

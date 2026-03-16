@@ -1118,6 +1118,7 @@
       <div class="separator"></div>
       <button class="btn-small" onclick="toggleEdit()" id="edit-btn">✏️ 편집</button>
       <button class="btn-small" onclick="openSaveModal()" id="save-btn" style="background:linear-gradient(135deg,#3d1266,#7b2fa0);color:white;border-color:#3d1266;">💾 저장하기</button>
+      <button class="btn-small" onclick="downloadLeafletImage()" id="img-dl-btn" style="background:linear-gradient(135deg,#c9a227,#e8c040);color:#1e0a2e;border-color:#c9a227;font-weight:700;">🖼️ 이미지 저장</button>
       <button class="btn-small" onclick="openShareModal()" style="background:#FEE500;color:#3C1E1E;border-color:#FDD835;font-weight:700;">💬 카카오 공유</button>
       <button class="btn-small" onclick="toggleHistory()" id="history-btn">📂 저장 목록</button>
     </div>
@@ -1753,6 +1754,115 @@ function toggleEdit() {
   });
   btn.textContent = editMode ? '✅ 편집 완료' : '✏️ 편집 모드';
   btn.style.background = editMode ? '#e8f5e9' : '';
+}
+
+// ── 🖼️ 이미지 저장 (툴바 전용 · 모바일 최적화) ──
+async function downloadLeafletImage() {
+  const el = document.getElementById('leaflet-content');
+  if (!el.classList.contains('active')) {
+    showToast('⚠️ 먼저 리플렛을 생성해주세요'); return;
+  }
+
+  const btn = document.getElementById('img-dl-btn');
+  const origText = btn.textContent;
+  btn.textContent = '⏳ 생성 중...';
+  btn.disabled    = true;
+
+  try {
+    const target = el;
+    const W = target.scrollWidth  || 640;
+    const H = target.scrollHeight || 900;
+
+    // 애니메이션 고정
+    const nodes  = Array.from(target.querySelectorAll('*'));
+    const backup = nodes.map(n => ({
+      opacity: n.style.opacity, transform: n.style.transform,
+      animation: n.style.animation, transition: n.style.transition
+    }));
+    nodes.forEach(n => {
+      n.style.animation = 'none'; n.style.transition = 'none'; n.style.transform = 'none';
+      const op = parseFloat(window.getComputedStyle(n).opacity);
+      if (!isNaN(op) && op < 0.99) n.style.opacity = '1';
+    });
+    void target.getBoundingClientRect();
+    await new Promise(r => setTimeout(r, 120));
+
+    const SCALE  = Math.max((window.devicePixelRatio || 1) * 2, 4);
+    const canvas = await html2canvas(target, {
+      scale: SCALE, useCORS: true, allowTaint: true,
+      backgroundColor: '#ffffff', logging: false, imageTimeout: 20000,
+      width: W, height: H, windowWidth: W, windowHeight: H,
+      scrollX: 0, scrollY: 0, foreignObjectRendering: false,
+      onclone(doc) {
+        const s = doc.createElement('style');
+        s.textContent = `*{-webkit-font-smoothing:antialiased!important;text-rendering:geometricPrecision!important;animation:none!important;transition:none!important;}[class*="fade"],[class*="delay"]{opacity:1!important;transform:none!important;}`;
+        doc.head.appendChild(s);
+        const lc = doc.getElementById('leaflet-content');
+        if (lc) { lc.style.height = H + 'px'; lc.style.overflow = 'visible'; }
+      }
+    });
+
+    // 복원
+    nodes.forEach((n, i) => {
+      n.style.opacity = backup[i].opacity; n.style.transform = backup[i].transform;
+      n.style.animation = backup[i].animation; n.style.transition = backup[i].transition;
+    });
+
+    const brand    = document.getElementById('brand-name').value.trim() || '내몸애맞게';
+    const ts       = new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','');
+    const fname    = `${brand}_리플렛_${ts}.png`;
+    const dataURL  = canvas.toDataURL('image/png', 1.0);
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      // 모바일: 이미지만 새 탭으로 열기 → OS 저장 기능 사용
+      const imgWin = window.open('', '_blank');
+      if (imgWin) {
+        imgWin.document.write(`<!DOCTYPE html><html><head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+          <title>${brand} 리플렛</title>
+          <style>
+            *{margin:0;padding:0;box-sizing:border-box;}
+            body{background:#111;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:12px;gap:12px;}
+            .tip{width:100%;max-width:640px;background:#FEE500;color:#3C1E1E;border-radius:12px;padding:13px 16px;font-family:sans-serif;font-size:14px;font-weight:700;line-height:1.9;text-align:center;}
+            .tip b{font-size:15px;}
+            .tip small{display:block;font-size:11px;font-weight:400;opacity:.65;margin-top:3px;}
+            img{width:100%;max-width:640px;display:block;border-radius:8px;}
+          </style>
+        </head><body>
+          <div class="tip">
+            <b>📥 이미지를 저장하는 방법</b><br>
+            이미지를 <b>길게 누르세요</b><br>
+            → <b>이미지 저장</b> 또는 <b>사진에 추가</b> 선택
+            <small>저장 후 카카오톡 → + → 앨범 → 전송</small>
+          </div>
+          <img src="${dataURL}" alt="${fname}">
+        </body></html>`);
+        imgWin.document.close();
+        showToast('📱 새 탭에서 이미지를 길게 눌러 저장하세요!');
+      } else {
+        // 팝업 차단 시 → 현재 탭 이동
+        location.href = dataURL;
+      }
+    } else {
+      // PC: 바로 다운로드
+      const a    = document.createElement('a');
+      a.download = fname;
+      a.href     = dataURL;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('✅ 이미지 저장 완료!');
+    }
+
+  } catch(e) {
+    showToast('⚠️ 이미지 생성 실패: ' + e.message);
+    console.error(e);
+  } finally {
+    btn.textContent = origText;
+    btn.disabled    = false;
+  }
 }
 
 // ── SAVE MODAL ──

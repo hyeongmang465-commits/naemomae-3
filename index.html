@@ -1832,14 +1832,15 @@ async function generateSharePNG() {
   const icon  = document.getElementById('share-gen-icon');
   const label = document.getElementById('share-gen-label');
 
-  btn.disabled   = true;
+  btn.disabled      = true;
   icon.textContent  = '⏳';
   label.textContent = '이미지 생성 중...';
 
   try {
-    const target = el.querySelector('div');
+    const target = el;
+    const W = target.scrollWidth  || 640;
+    const H = target.scrollHeight || 900;
 
-    // 애니메이션 고정
     const nodes  = Array.from(target.querySelectorAll('*'));
     const backup = nodes.map(n => ({
       opacity: n.style.opacity, transform: n.style.transform,
@@ -1847,37 +1848,37 @@ async function generateSharePNG() {
     }));
     nodes.forEach(n => {
       n.style.animation = 'none'; n.style.transition = 'none'; n.style.transform = 'none';
-      if (parseFloat(window.getComputedStyle(n).opacity) < 0.99) n.style.opacity = '1';
+      const op = parseFloat(window.getComputedStyle(n).opacity);
+      if (!isNaN(op) && op < 0.99) n.style.opacity = '1';
     });
-    target.getBoundingClientRect(); // 강제 리플로우
+    void target.getBoundingClientRect();
+    await new Promise(r => setTimeout(r, 100));
 
-    const SCALE  = Math.max(window.devicePixelRatio * 2, 4);
+    const SCALE  = Math.max((window.devicePixelRatio || 1) * 2, 4);
     const canvas = await html2canvas(target, {
       scale: SCALE, useCORS: true, allowTaint: true,
       backgroundColor: '#ffffff', logging: false, imageTimeout: 20000,
-      width: target.offsetWidth, height: target.scrollHeight,
+      width: W, height: H, windowWidth: W, windowHeight: H,
       scrollX: 0, scrollY: 0, foreignObjectRendering: false,
       onclone(doc) {
         const s = doc.createElement('style');
         s.textContent = `*{-webkit-font-smoothing:antialiased!important;text-rendering:geometricPrecision!important;animation:none!important;transition:none!important;}[class*="fade"],[class*="delay"]{opacity:1!important;transform:none!important;}`;
         doc.head.appendChild(s);
+        const lc = doc.getElementById('leaflet-content');
+        if (lc) { lc.style.height = H + 'px'; lc.style.overflow = 'visible'; }
       }
     });
 
-    // 복원
     nodes.forEach((n, i) => {
       n.style.opacity = backup[i].opacity; n.style.transform = backup[i].transform;
       n.style.animation = backup[i].animation; n.style.transition = backup[i].transition;
     });
 
     sharePNGDataURL = canvas.toDataURL('image/png', 1.0);
-
-    // 미리보기 표시
-    document.getElementById('share-png-img').src         = sharePNGDataURL;
-    document.getElementById('share-png-placeholder').style.display = 'none';
-    document.getElementById('share-png-preview').style.display     = 'block';
-    document.getElementById('share-save-btn').style.display        = 'block';
-
+    document.getElementById('share-png-img').src                    = sharePNGDataURL;
+    document.getElementById('share-png-placeholder').style.display  = 'none';
+    document.getElementById('share-png-preview').style.display      = 'block';
+    document.getElementById('share-save-btn').style.display         = 'block';
     icon.textContent  = '✅';
     label.textContent = '이미지 재생성';
     btn.disabled      = false;
@@ -1887,7 +1888,7 @@ async function generateSharePNG() {
     icon.textContent  = '⚠️';
     label.textContent = '이미지 생성하기';
     btn.disabled      = false;
-    showToast('⚠️ 이미지 생성 실패. 다시 시도해주세요.');
+    showToast('⚠️ 이미지 생성 실패: ' + e.message);
     console.error(e);
   }
 }
@@ -1902,9 +1903,12 @@ async function savePNG() {
   showToast('⏳ 고화질 이미지 생성 중...');
 
   try {
-    const target = el.querySelector('div');
+    // leaflet-content 자체를 타겟으로 사용
+    const target = el;
+    const W = target.scrollWidth  || 640;
+    const H = target.scrollHeight || 900;
 
-    // 애니메이션·opacity 임시 고정 (흐림 방지)
+    // 애니메이션·opacity 임시 고정
     const nodes  = Array.from(target.querySelectorAll('*'));
     const backup = nodes.map(n => ({
       opacity: n.style.opacity, transform: n.style.transform,
@@ -1914,9 +1918,12 @@ async function savePNG() {
       n.style.animation  = 'none';
       n.style.transition = 'none';
       n.style.transform  = 'none';
-      if (parseFloat(window.getComputedStyle(n).opacity) < 0.99) n.style.opacity = '1';
+      const op = parseFloat(window.getComputedStyle(n).opacity);
+      if (!isNaN(op) && op < 0.99) n.style.opacity = '1';
     });
-    target.getBoundingClientRect(); // 강제 리플로우
+    // 강제 리플로우
+    void target.getBoundingClientRect();
+    await new Promise(r => setTimeout(r, 100));
 
     const SCALE  = Math.max((window.devicePixelRatio || 1) * 2, 4);
     const canvas = await html2canvas(target, {
@@ -1926,8 +1933,10 @@ async function savePNG() {
       backgroundColor    : '#ffffff',
       logging            : false,
       imageTimeout       : 20000,
-      width              : target.offsetWidth,
-      height             : target.scrollHeight,
+      width              : W,
+      height             : H,
+      windowWidth        : W,
+      windowHeight       : H,
       scrollX            : 0,
       scrollY            : 0,
       foreignObjectRendering: false,
@@ -1940,10 +1949,13 @@ async function savePNG() {
           [class*="fade"],[class*="delay"] { opacity:1!important; transform:none!important; }
         `;
         doc.head.appendChild(s);
+        // 클론된 leaflet-content 높이 고정
+        const lc = doc.getElementById('leaflet-content');
+        if (lc) { lc.style.height = H + 'px'; lc.style.overflow = 'visible'; }
       }
     });
 
-    // 복원
+    // 스타일 복원
     nodes.forEach((n, i) => {
       n.style.opacity    = backup[i].opacity;
       n.style.transform  = backup[i].transform;
@@ -1961,7 +1973,7 @@ async function savePNG() {
     document.body.removeChild(a);
     showToast('✅ 고화질 PNG 저장 완료!');
   } catch(e) {
-    showToast('⚠️ PNG 저장 실패 — HTML 저장을 이용해주세요');
+    showToast('⚠️ PNG 저장 실패: ' + e.message);
     console.error(e);
   }
 }

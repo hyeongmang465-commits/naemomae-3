@@ -1072,25 +1072,54 @@
           <input type="file" id="img-input-0" accept="image/*" style="display:none" onchange="onImgSelected(0,this)">
         </div>
 
-        <!-- 이미지 높이 조절 슬라이더 -->
+        <!-- 이미지 사이즈 지정 -->
         <div id="img-ratio-box" style="display:none; background:var(--cream); border:1.5px solid var(--border); border-radius:10px; padding:12px 14px; margin-top:2px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <span style="font-size:12px; font-weight:700; color:var(--ink);">📐 이미지 높이 조절</span>
-            <span id="img-ratio-val" style="font-size:12px; font-weight:800; color:var(--accent); min-width:48px; text-align:right;">300px</span>
+          <div style="font-size:12px; font-weight:800; color:var(--ink); margin-bottom:10px;">📐 이미지 사이즈 지정</div>
+
+          <!-- 가로×세로 직접 입력 -->
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+            <div style="flex:1;">
+              <div style="font-size:10px; color:var(--muted); margin-bottom:3px;">가로 (px)</div>
+              <input type="number" id="img-width-input" value="640" min="100" max="1200" step="10"
+                style="width:100%; padding:7px 8px; border:1.5px solid var(--border); border-radius:7px; font-size:13px; font-weight:700; color:var(--ink); font-family:'Noto Sans KR',sans-serif; text-align:center;"
+                oninput="onImgSizeChange()">
+            </div>
+            <div style="font-size:16px; color:var(--muted); padding-top:14px;">×</div>
+            <div style="flex:1;">
+              <div style="font-size:10px; color:var(--muted); margin-bottom:3px;">높이 (px)</div>
+              <input type="number" id="img-height-input" value="300" min="80" max="800" step="10"
+                style="width:100%; padding:7px 8px; border:1.5px solid var(--border); border-radius:7px; font-size:13px; font-weight:700; color:var(--ink); font-family:'Noto Sans KR',sans-serif; text-align:center;"
+                oninput="onImgSizeChange()">
+            </div>
+            <div style="padding-top:14px;">
+              <button onclick="applyImgSize()" style="padding:7px 10px; background:var(--accent); color:white; border:none; border-radius:7px; font-size:11px; font-weight:700; cursor:pointer; font-family:'Noto Sans KR',sans-serif; white-space:nowrap;">적용</button>
+            </div>
           </div>
-          <input type="range" id="img-ratio-slider" min="100" max="600" step="10" value="300"
-            style="width:100%; accent-color:var(--accent);"
-            oninput="onImgRatioChange(this.value)">
-          <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-top:4px;">
-            <span>낮게 100px</span>
-            <span>중간 300px</span>
-            <span>높게 600px</span>
+
+          <!-- 프리셋 버튼 -->
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
+            <button onclick="setImgPreset(640,200)" style="padding:7px 4px; font-size:11px; border:1.5px solid var(--border); border-radius:7px; background:white; cursor:pointer; font-family:'Noto Sans KR',sans-serif; line-height:1.5;">
+              📰 배너형<br><span style="opacity:.6; font-size:10px;">640×200</span>
+            </button>
+            <button onclick="setImgPreset(640,300)" style="padding:7px 4px; font-size:11px; border:1.5px solid var(--border); border-radius:7px; background:white; cursor:pointer; font-family:'Noto Sans KR',sans-serif; line-height:1.5;">
+              🖼️ 표준형<br><span style="opacity:.6; font-size:10px;">640×300</span>
+            </button>
+            <button onclick="setImgPreset(640,400)" style="padding:7px 4px; font-size:11px; border:1.5px solid var(--border); border-radius:7px; background:white; cursor:pointer; font-family:'Noto Sans KR',sans-serif; line-height:1.5;">
+              📷 와이드<br><span style="opacity:.6; font-size:10px;">640×400</span>
+            </button>
+            <button onclick="setImgPreset(400,400)" style="padding:7px 4px; font-size:11px; border:1.5px solid var(--border); border-radius:7px; background:white; cursor:pointer; font-family:'Noto Sans KR',sans-serif; line-height:1.5;">
+              ⬛ 정사각<br><span style="opacity:.6; font-size:10px;">400×400</span>
+            </button>
+            <button onclick="setImgPreset(400,500)" style="padding:7px 4px; font-size:11px; border:1.5px solid var(--border); border-radius:7px; background:white; cursor:pointer; font-family:'Noto Sans KR',sans-serif; line-height:1.5;">
+              📱 세로형<br><span style="opacity:.6; font-size:10px;">400×500</span>
+            </button>
+            <button onclick="setImgPreset(640,480)" style="padding:7px 4px; font-size:11px; border:1.5px solid var(--border); border-radius:7px; background:white; cursor:pointer; font-family:'Noto Sans KR',sans-serif; line-height:1.5;">
+              🎬 시네마<br><span style="opacity:.6; font-size:10px;">640×480</span>
+            </button>
           </div>
-          <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;">
-            <button onclick="onImgRatioChange(150)" style="flex:1;padding:5px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">배너형<br><span style="opacity:.6;">150px</span></button>
-            <button onclick="onImgRatioChange(250)" style="flex:1;padding:5px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">표준형<br><span style="opacity:.6;">250px</span></button>
-            <button onclick="onImgRatioChange(350)" style="flex:1;padding:5px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">정사각<br><span style="opacity:.6;">350px</span></button>
-            <button onclick="onImgRatioChange(500)" style="flex:1;padding:5px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">세로형<br><span style="opacity:.6;">500px</span></button>
+
+          <div style="font-size:10.5px; color:var(--muted); margin-top:8px; line-height:1.6;">
+            💡 이미지는 지정 사이즈로 <strong>꽉 채워</strong> 빈 공간 없이 표시됩니다
           </div>
         </div>
 
@@ -1679,6 +1708,7 @@ function renderLeaflet(d, brand, contact) {
   // Footer link icons — 삭제 (홈페이지·유튜브 탭 제거)
 
   const imgH = window._imgHeightPx || 300;
+  const imgW = window._imgWidthPx  || 640;
 
   const html = `
     <div style="background:${bg}; color:${p}; display:flex; flex-direction:column; min-height:820px;">
@@ -1706,7 +1736,9 @@ function renderLeaflet(d, brand, contact) {
         ${uploadedImages[0] ? `
         <div class="leaflet-divider"></div>
         <div>
-          <img src="${uploadedImages[0]}" style="width:100%;height:${imgH}px;object-fit:cover;display:block;border-radius:10px;">
+          <div style="overflow:hidden;border-radius:10px;width:100%;height:${imgH}px;">
+            <img src="${uploadedImages[0]}" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+          </div>
         </div>` : ''}
 
       </div>
@@ -2197,8 +2229,9 @@ document.getElementById('share-modal-overlay').addEventListener('click', functio
 });
 
 // ── IMAGE UPLOAD (1장) ──
-const uploadedImages = [null]; // 1장만
-window._imgHeightPx  = 300;   // 기본 높이
+const uploadedImages  = [null];
+window._imgWidthPx   = 640;  // 기본 가로
+window._imgHeightPx  = 300;  // 기본 높이
 
 function triggerImgUpload(idx) {
   document.getElementById(`img-input-${idx}`).click();
@@ -2214,38 +2247,29 @@ function onImgSelected(idx, input) {
   reader.onload = e => {
     uploadedImages[0] = e.target.result;
     showImgSlot(0, e.target.result, file.name, file.size);
-    showToast('✅ 이미지 업로드 완료! 높이를 조절 후 리플렛을 재생성하세요.');
+    showToast('✅ 이미지 업로드 완료! 사이즈를 지정 후 리플렛을 재생성하세요.');
   };
   reader.readAsDataURL(file);
   input.value = '';
 }
 
 function showImgSlot(idx, src, name, size) {
-  // 파일명
   document.getElementById(`img-name-${idx}`).textContent =
     name.length > 18 ? name.slice(0,15)+'...' : name;
-
-  // 파일 용량
   const sizeStr = size/1024 < 1024
     ? Math.round(size/1024) + 'KB'
     : (size/1024/1024).toFixed(1) + 'MB';
   document.getElementById(`img-size-${idx}`).textContent = sizeStr;
-
-  // 픽셀 크기
   const tempImg = new Image();
   tempImg.onload = () => {
     const pxEl = document.getElementById(`img-px-${idx}`);
     if (pxEl) pxEl.textContent = `${tempImg.naturalWidth} × ${tempImg.naturalHeight}px`;
   };
   tempImg.src = src;
-
-  // 썸네일·슬롯 상태
   document.getElementById(`img-thumb-${idx}`).src = src;
   document.getElementById(`img-slot-${idx}`).classList.add('has-image');
   document.querySelector(`#img-slot-${idx} .img-slot-empty`).style.display = 'none';
   document.getElementById(`img-preview-${idx}`).style.display = 'block';
-
-  // 슬라이더 박스 표시
   document.getElementById('img-ratio-box').style.display = 'block';
 }
 
@@ -2259,30 +2283,48 @@ function removeImg(idx) {
   document.getElementById(`img-slot-${idx}`).classList.remove('has-image');
   document.querySelector(`#img-slot-${idx} .img-slot-empty`).style.display = 'flex';
   document.getElementById(`img-preview-${idx}`).style.display = 'none';
-  // 슬라이더 숨김
   document.getElementById('img-ratio-box').style.display = 'none';
   showToast('🗑️ 이미지가 삭제되었습니다');
 }
 
-// 이미지 높이 비율 변경 → 리플렛 실시간 반영
-function onImgRatioChange(val) {
-  val = parseInt(val);
-  window._imgHeightPx = val;
-  // 슬라이더·표시값 동기화
-  const slider = document.getElementById('img-ratio-slider');
-  const label  = document.getElementById('img-ratio-val');
-  if (slider) slider.value = val;
-  if (label)  label.textContent = val + 'px';
-  // 리플렛 이미지 즉시 반영
+// 프리셋 선택 → 입력란 채우기
+function setImgPreset(w, h) {
+  document.getElementById('img-width-input').value  = w;
+  document.getElementById('img-height-input').value = h;
+  applyImgSize();
+}
+
+// 적용 버튼 → 리플렛 즉시 반영
+function applyImgSize() {
+  const w = parseInt(document.getElementById('img-width-input').value)  || 640;
+  const h = parseInt(document.getElementById('img-height-input').value) || 300;
+  window._imgWidthPx  = w;
+  window._imgHeightPx = h;
+  // 리플렛 내 이미지 즉시 업데이트
   const imgEl = document.querySelector('#leaflet-content img[src^="data:image"]');
-  if (imgEl) imgEl.style.height = val + 'px';
+  if (imgEl) {
+    imgEl.style.width      = '100%';
+    imgEl.style.height     = h + 'px';
+    imgEl.style.objectFit  = 'cover';
+    imgEl.style.objectPosition = 'center';
+    imgEl.style.display    = 'block';
+    imgEl.style.borderRadius = '10px';
+  }
+  showToast(`✅ 이미지 사이즈 적용: ${w} × ${h}px`);
+}
+
+// input 변경 시 실시간 반영 (Enter 없이)
+function onImgSizeChange() {
+  // 입력 중 즉시 적용하지 않음 — 적용 버튼 또는 프리셋 클릭 시만 반영
 }
 
 function buildImgGridHTML() {
   const img = uploadedImages[0];
   if (!img) return '';
   const h = window._imgHeightPx || 300;
-  return `<img src="${img}" style="width:100%;height:${h}px;object-fit:cover;display:block;border-radius:10px;">`;
+  return `<div style="overflow:hidden;border-radius:10px;width:100%;height:${h}px;">
+    <img src="${img}" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+  </div>`;
 }
 (function() {
   const slot = document.getElementById('img-slot-0');
